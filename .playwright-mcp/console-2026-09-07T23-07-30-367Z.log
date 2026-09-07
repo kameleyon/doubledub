@@ -1,9 +1,0 @@
-[     411ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3100/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
-[     511ms] [LOG] [HMR] connected @ http://localhost:3100/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
-[     638ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3100/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
-[     786ms] [LOG] [Fast Refresh] done in 247ms @ http://localhost:3100/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
-[   22796ms] [ERROR] Failed to load resource: net::ERR_SSL_PROTOCOL_ERROR @ https://localhost:3100/sign-in?next=%2Fapi%2F__none:0
-[   38236ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3100/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
-[   39839ms] [LOG] [Fast Refresh] done in 1704ms @ http://localhost:3100/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
-[   40153ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3100/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
-[   40875ms] [LOG] [Fast Refresh] done in 823ms @ http://localhost:3100/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776

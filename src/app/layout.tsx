@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Manrope, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
+import { ScrollFade } from '@/components/ScrollFade';
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -45,7 +46,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${manrope.variable} ${plexMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ScrollFade />
+      </body>
     </html>
   );
 }

@@ -50,3 +50,6 @@ supabase/.temp/
 
 .vercel
 .env*
+
+# Playwright MCP session artifacts
+.playwright-mcp/

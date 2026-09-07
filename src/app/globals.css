@@ -52,6 +52,49 @@ body {
     env(safe-area-inset-left);
 }
 
+/* Scrollbars: thin, and out of sight until they are relevant.
+   A persistent bar eats horizontal space and draws the eye away from the feed.
+   Firefox gets scrollbar-width/color; WebKit and Chromium get the pseudo
+   elements. `data-scrolling` is set briefly by ScrollFade while the user is
+   actually scrolling, since CSS alone cannot observe that. */
+.dd-scroll,
+body {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.dd-scroll:hover,
+.dd-scroll[data-scrolling],
+body:hover,
+body[data-scrolling] {
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+.dd-scroll::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.dd-scroll::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dd-scroll::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+  transition: background 200ms ease;
+}
+
+.dd-scroll:hover::-webkit-scrollbar-thumb,
+.dd-scroll[data-scrolling]::-webkit-scrollbar-thumb,
+body:hover::-webkit-scrollbar-thumb,
+body[data-scrolling]::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+}
+
 /* Tailwind v4 dropped the default `cursor: pointer` on buttons, so every
    control in the app rendered with an arrow and read as non-interactive.
    Restore it, and make a disabled control say so. */
