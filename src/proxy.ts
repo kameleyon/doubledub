@@ -53,8 +53,15 @@ export default async function proxy(request: NextRequest) {
   crypto.getRandomValues(nonceBytes);
   const nonce = btoa(String.fromCharCode(...nonceBytes));
 
+  const csp = buildCsp(nonce, isDev);
+
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-nonce', nonce);
+  // Next reads the nonce out of the CSP on the REQUEST to stamp it onto its own
+  // script tags. Setting it only on the response left every script un-nonced,
+  // which — combined with 'strict-dynamic' — blocked all client JavaScript in
+  // production. Locally `next start` papered over it; Vercel did not.
+  requestHeaders.set('Content-Security-Policy', csp);
 
   let response = NextResponse.next({ request: { headers: requestHeaders } });
 
@@ -102,7 +109,7 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  response.headers.set('Content-Security-Policy', buildCsp(nonce, isDev));
+  response.headers.set('Content-Security-Policy', csp);
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
