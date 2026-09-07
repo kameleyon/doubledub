@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { PLANS, formatPrice, perDayPrice } from '@/lib/plans';
+import { PLANS, perDayPrice } from '@/lib/plans';
 import { BET_TYPES } from '@/lib/feed';
+import { PlanShowcase } from '@/components/PlanShowcase';
 
 export const metadata: Metadata = {
   title: 'doubledub — better picks, bigger wins',
@@ -40,7 +41,7 @@ export default function Home() {
 
         <Link
           href="/sign-up"
-          className="mx-auto mt-8 flex h-14 w-full max-w-[320px] items-center justify-center rounded-[14px] bg-[var(--color-accent)] text-[15px] font-bold tracking-[-0.02em] text-[var(--color-on-accent)] no-underline"
+          className="mx-auto mt-8 flex h-[46px] w-fit items-center rounded-full bg-[var(--color-accent)] px-8 text-[14px] font-semibold tracking-[-0.01em] text-[var(--color-on-accent)] no-underline"
         >
           Get access
         </Link>
@@ -93,32 +94,7 @@ export default function Home() {
           Pick a term that suits you — the longer the term, the lower the daily rate. Every plan
           unlocks the full feed.
         </p>
-        <div className="mt-4 grid grid-cols-2 gap-[10px]">
-          {PLANS.filter((p) => ['dd_3d', 'dd_1w', 'dd_1m', 'dd_1y'].includes(p.code)).map((p) => (
-            <div
-              key={p.code}
-              className={`rounded-[14px] border p-4 ${
-                p.badge
-                  ? 'border-[var(--color-accent)] bg-[rgba(248,209,23,0.06)]'
-                  : 'border-[var(--color-line)] bg-[var(--color-surface)]'
-              }`}
-            >
-              <div className="text-[13px] font-semibold">{p.label}</div>
-              <div className="mt-2 font-mono text-[17px] font-medium text-[var(--color-accent)]">
-                {formatPrice(p.amountCents)}
-              </div>
-              <div className="mt-1 font-mono text-[11px] text-[var(--color-ink-3)]">
-                {perDayPrice(p)} / day
-              </div>
-            </div>
-          ))}
-        </div>
-        <Link
-          href="/sign-up"
-          className="mt-5 flex h-13 w-full items-center justify-center rounded-[14px] border border-[var(--color-line)] bg-[var(--color-surface)] py-4 text-[14px] font-semibold text-[var(--color-ink)] no-underline"
-        >
-          See all plans
-        </Link>
+        <PlanShowcase />
       </section>
 
       <footer className="mt-16 border-t border-[var(--color-line)] pt-8 text-center">
