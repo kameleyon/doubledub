@@ -53,7 +53,7 @@ export const BET_TYPES: { value: BetType; label: string }[] = [
   { value: 'single', label: 'Straight' },
   { value: 'parlay', label: 'Parlay' },
   { value: 'prop', label: 'Prop' },
-  { value: 'total', label: 'Over / Under' },
+  { value: 'total', label: 'Totals' },
   { value: 'futures', label: 'Futures' },
   { value: 'live', label: 'Live' },
 ];

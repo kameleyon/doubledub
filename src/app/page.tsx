@@ -73,11 +73,13 @@ export default function Home() {
 
       <section className="mt-14">
         <SectionLabel>Every kind of play</SectionLabel>
-        <div className="mt-4 flex flex-wrap gap-2">
+        {/* Sized to sit on a single line at this column width; still wraps
+            gracefully rather than overflowing on a very narrow screen. */}
+        <div className="mt-4 flex flex-wrap justify-center gap-[6px]">
           {BET_TYPES.map((b) => (
             <span
               key={b.value}
-              className="rounded-full border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-[9px] text-[12.5px] font-medium text-[var(--color-ink-2)]"
+              className="whitespace-nowrap rounded-full border border-[var(--color-line)] bg-[var(--color-surface)] px-3 py-[8px] text-[12px] font-medium text-[var(--color-ink-2)]"
             >
               {b.label}
             </span>

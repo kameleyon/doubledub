@@ -29,7 +29,18 @@ export function AuthForm({ mode, next }: { mode: 'signin' | 'signup'; next?: str
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-[440px] flex-col px-7 pt-14 pb-8">
       <div className="flex flex-col items-center gap-4">
-        <Image src="/ddlogo.png" alt="doubledub" width={220} height={73} priority className="h-auto w-[220px]" />
+        {/* The logo is the way back out — someone who lands here by mistake
+            should not have to reach for the browser's back button. */}
+        <Link href="/" aria-label="doubledub home" className="no-underline">
+          <Image
+            src="/ddlogo.png"
+            alt="doubledub"
+            width={220}
+            height={73}
+            priority
+            className="h-auto w-[220px]"
+          />
+        </Link>
         <span className="text-[9.5px] font-semibold tracking-[0.34em] text-[var(--color-ink-3)]">
           BETTER PICKS&nbsp; BIGGER WINS
         </span>
