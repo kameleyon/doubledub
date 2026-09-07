@@ -1,0 +1,253 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #121214; font-family: Manrope, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #F8D117; text-decoration: none; }
+    a:hover { color: #FFE45C; }
+    .dd-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+    .dd-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    button { font-family: inherit; cursor: pointer; border: 0; background: none; padding: 0; color: inherit; text-align: left; }
+    input { font-family: inherit; }
+    input::placeholder { color: #55555C; }
+    input:focus { outline: none; }
+  </style>
+</helmet>
+
+<div style="width: 390px; height: 844px; background: #121214; color: #EDEDEC; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="display: flex; align-items: center; gap: 8px; padding: 20px 14px 12px 14px; flex-shrink: 0;">
+    <div style="flex-grow: 1; display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; background: #1A1A1D; border: 1.5px solid #2E2E34; border-radius: 13px;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8C8C93" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+      <input ref="{{bindInput}}" onInput="{{onQuery}}" type="text" placeholder="Search picks, teams, players" style="flex-grow: 1; height: 44px; border: 0; background: transparent; color: #EDEDEC; font-size: 14px;">
+    </div>
+    <button style="height: 48px; padding: 0 10px; font-size: 13px; font-weight: 500; color: #8C8C93;">Cancel</button>
+  </div>
+
+  <div class="dd-scroll" style="display: flex; align-items: center; gap: 8px; padding: 0 14px 12px 14px; overflow-x: auto; flex-shrink: 0;">
+    <button onClick="{{togglePanel}}" style="{{filterBtnStyle}}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9"></path><path d="M19 7h1"></path><circle cx="16" cy="7" r="2.4"></circle><path d="M4 17h4"></path><path d="M14 17h6"></path><circle cx="11" cy="17" r="2.4"></circle></svg>
+      <span>{{filterBtnLabel}}</span>
+    </button>
+    <span style="width: 1px; height: 24px; background: #2A2A2E; flex-shrink: 0;"></span>
+    <sc-for list="{{leagues}}" as="lg" hint-placeholder-count="5">
+      <button onClick="{{lg.pick}}" style="{{lg.style}}">{{lg.label}}</button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{panelOpen}}" hint-placeholder-val="{{true}}">
+    <div style="margin: 0 14px 12px 14px; padding: 16px; background: #17171A; border: 1px solid #2A2A2E; border-radius: 15px; flex-shrink: 0;">
+
+      <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #55555C;">Bet type</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px;">
+        <sc-for list="{{types}}" as="t" hint-placeholder-count="4">
+          <button onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+        </sc-for>
+      </div>
+
+      <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #55555C; margin-top: 18px;">Sort by</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px;">
+        <sc-for list="{{sorts}}" as="s" hint-placeholder-count="3">
+          <button onClick="{{s.pick}}" style="{{s.style}}">{{s.label}}</button>
+        </sc-for>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 9px; margin-top: 20px;">
+        <button onClick="{{resetAll}}" style="flex-grow: 1; height: 46px; border-radius: 12px; background: #232328; border: 1px solid #2E2E34; font-size: 13px; font-weight: 500; color: #9C9CA3; display: flex; align-items: center; justify-content: center;">Reset</button>
+        <button onClick="{{togglePanel}}" style="{{applyStyle}}">{{applyLabel}}</button>
+      </div>
+
+    </div>
+  </sc-if>
+
+  <div class="dd-scroll" style="flex-grow: 1; overflow-y: auto; padding: 0 18px 20px 18px;">
+
+    <sc-if value="{{showRecent}}" hint-placeholder-val="{{true}}">
+      <div style="padding-bottom: 20px;">
+        <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #55555C; padding-bottom: 12px;">Recent searches</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <sc-for list="{{recents}}" as="r" hint-placeholder-count="4">
+            <button onClick="{{r.pick}}" style="display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 999px; background: #1A1A1D; border: 1px solid #2A2A2E; font-size: 12.5px; font-weight: 500; color: #9C9CA3;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#55555C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 1.8"></path></svg>
+              {{r.label}}
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="padding-top: 16px;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 12px;">
+        <span style="font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #55555C;">Picks</span>
+        <span style="font-size: 11px; color: #55555C;">{{resultCount}}</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 9px;">
+        <sc-for list="{{picks}}" as="p" hint-placeholder-count="4">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 13px 14px; background: #1A1A1D; border: 1px solid #2A2A2E; border-radius: 13px;">
+            <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 5px;">
+              <div style="display: flex; align-items: center; gap: 7px;">
+                <span style="padding: 2px 7px; border-radius: 5px; background: #232328; font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em; color: #9C9CA3;">{{p.league}}</span>
+                <span style="{{p.kindStyle}}">{{p.kind}}</span>
+              </div>
+              <span style="font-size: 13.5px; font-weight: 500; letter-spacing: -0.01em; color: #EDEDEC; text-wrap: pretty;">{{p.text}}</span>
+              <span style="font-size: 11px; color: #6E6E75;">{{p.meta}}</span>
+            </div>
+            <span style="{{p.oddsStyle}}">{{p.odds}}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{empty}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 44px 20px;">
+          <span style="width: 52px; height: 52px; border-radius: 16px; background: #1A1A1D; border: 1px solid #2A2A2E; display: flex; align-items: center; justify-content: center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#55555C" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+          </span>
+          <span style="font-size: 14px; font-weight: 600; color: #9C9CA3;">No picks match</span>
+          <span style="font-size: 12.5px; line-height: 1.5; color: #55555C; text-align: center; max-width: 230px; text-wrap: pretty;">Try a different team or player, or clear a filter.</span>
+        </div>
+      </sc-if>
+    </div>
+
+  </div>
+
+  <div style="flex-shrink: 0; display: flex; align-items: flex-start; justify-content: space-around; height: 76px; padding: 10px 8px 0 8px; background: #151517; border-top: 1px solid #232327;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; width: 68px; height: 52px; justify-content: center; color: #5E5E66;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7.5" rx="2.4"></rect><rect x="3" y="14" width="18" height="6" rx="2.2"></rect></svg>
+      <span style="font-size: 10px; font-weight: 500;">Feed</span>
+    </div>
+    <div style="{{navActiveStyle}}">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+      <span style="font-size: 10px; font-weight: 600;">Search</span>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; width: 68px; height: 52px; justify-content: center; color: #5E5E66;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M6 4.9A1.9 1.9 0 0 1 7.9 3h8.2A1.9 1.9 0 0 1 18 4.9V21l-6-3.8L6 21V4.9Z"></path></svg>
+      <span style="font-size: 10px; font-weight: 500;">My Tails</span>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; width: 68px; height: 52px; justify-content: center; color: #5E5E66;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8.4" r="3.7"></circle><path d="M4.9 20a7.6 7.6 0 0 1 14.2 0"></path></svg>
+      <span style="font-size: 10px; font-weight: 500;">Profile</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#F8D117","options":["#F8D117","#EDEDEC","#3FBF7F","#7C6BF5"],"section":"Brand"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { q: '', league: 'All', type: 'Any', sort: 'Newest', panel: false };
+
+  accent() { return this.props.accent || '#F8D117'; }
+
+  pickData() {
+    return [
+      { league: 'MLB',    type: 'Parlay', kind: 'Slip', text: 'Tatis + Crow-Armstrong home run parlay', day: 0, tails: 61,  views: 842,  odds: '+1560' },
+      { league: 'NBA',    type: 'Prop',   kind: 'Text', text: 'Anthony Edwards Over 26.5 PTS',          day: 2, tails: 104, views: 1412, odds: '-110' },
+      { league: 'TENNIS', type: 'Single', kind: 'Text', text: 'Alexander Blockx ML',                    day: 4, tails: 27,  views: 312,  odds: '-135' },
+      { league: 'NFL',    type: 'Parlay', kind: 'Slip', text: 'Henry Over 74.5 + Packers -3.5',         day: 3, tails: 43,  views: 607,  odds: '+410' },
+      { league: 'MLB',    type: 'Total',  kind: 'Text', text: 'COL vs ARI Over 10.5',                   day: 5, tails: 34,  views: 498,  odds: '+105' },
+      { league: 'NBA',    type: 'Single', kind: 'Slip', text: 'Thunder -6.5 vs Timberwolves',           day: 0, tails: 19,  views: 274,  odds: '-108' },
+      { league: 'NFL',    type: 'Prop',   kind: 'Text', text: 'Puka Nacua Over 5.5 receptions',         day: 6, tails: 88,  views: 1104, odds: '-120' },
+      { league: 'MLB',    type: 'Single', kind: 'Slip', text: 'Padres ML vs Nationals',                 day: 8, tails: 12,  views: 208,  odds: '-145' }
+    ];
+  }
+
+  chip(on, small) {
+    var base = 'flex-shrink: 0; display: inline-flex; align-items: center; gap: 7px; height: ' + (small ? '40px' : '44px') + '; padding: 0 15px; border-radius: 999px; font-size: 12.5px; font-weight: 500; white-space: nowrap;';
+    if (on) return base + ' background: ' + this.accent() + '; color: #17170C; border: 1px solid ' + this.accent() + ';';
+    return base + ' background: #1A1A1D; color: #9C9CA3; border: 1px solid #2A2A2E;';
+  }
+
+  ago(d) {
+    if (d === 0) { return 'today'; }
+    if (d === 1) { return 'yesterday'; }
+    return d + ' days ago';
+  }
+
+  renderVals() {
+    var self = this;
+    var S = this.state;
+    var accent = this.accent();
+    var q = S.q.trim().toLowerCase();
+
+    var leagues = ['All', 'MLB', 'NBA', 'NFL', 'TENNIS'].map(function (label) {
+      return { label: label, style: self.chip(label === S.league, false), pick: function () { self.setState({ league: label }); } };
+    });
+    var types = ['Any', 'Single', 'Parlay', 'Prop', 'Total'].map(function (label) {
+      return { label: label, style: self.chip(label === S.type, true), pick: function () { self.setState({ type: label }); } };
+    });
+    var sorts = ['Newest', 'Most tailed', 'Most viewed'].map(function (label) {
+      return { label: label, style: self.chip(label === S.sort, true), pick: function () { self.setState({ sort: label }); } };
+    });
+
+    var picks = this.pickData().filter(function (p) {
+      if (S.league !== 'All' && p.league !== S.league) { return false; }
+      if (S.type !== 'Any' && p.type !== S.type) { return false; }
+      if (q && (p.text + ' ' + p.league).toLowerCase().indexOf(q) < 0) { return false; }
+      return true;
+    });
+
+    picks.sort(function (a, b) {
+      if (S.sort === 'Most tailed') { return b.tails - a.tails; }
+      if (S.sort === 'Most viewed') { return b.views - a.views; }
+      return a.day - b.day;
+    });
+
+    var shaped = picks.map(function (p) {
+      return {
+        league: p.league, text: p.text, odds: p.odds,
+        kind: p.kind,
+        kindStyle: 'padding: 2px 7px; border-radius: 5px; font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em; '
+          + (p.kind === 'Slip' ? 'background: rgba(248, 209, 23, 0.13); color: ' + accent + ';' : 'background: #26262B; color: #9C9CA3;'),
+        meta: self.ago(p.day) + '  ·  ' + p.tails + ' tails  ·  ' + p.views + ' views',
+        oddsStyle: "font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13.5px; font-weight: 500; color: " + accent + ';'
+      };
+    });
+
+    var active = 0;
+    if (S.league !== 'All') { active = active + 1; }
+    if (S.type !== 'Any') { active = active + 1; }
+    if (S.sort !== 'Newest') { active = active + 1; }
+
+    return {
+      accent: accent,
+      bindInput: function (el) { self.input = el; },
+      onQuery: function (e) { self.setState({ q: e.target.value }); },
+
+      leagues: leagues,
+      types: types,
+      sorts: sorts,
+
+      panelOpen: S.panel,
+      togglePanel: function () { self.setState({ panel: !S.panel }); },
+      filterBtnLabel: active > 0 ? 'Filters  ' + active : 'Filters',
+      filterBtnStyle: 'flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 15px; border-radius: 999px; font-size: 12.5px; font-weight: 600; '
+        + (active > 0 || S.panel
+          ? 'background: rgba(248, 209, 23, 0.1); color: ' + accent + '; border: 1px solid ' + accent + ';'
+          : 'background: #1A1A1D; color: #C9C9CE; border: 1px solid #2A2A2E;'),
+      applyLabel: 'Show ' + picks.length + ' picks',
+      applyStyle: 'flex-grow: 1.4; height: 46px; border-radius: 12px; background: ' + accent + '; color: #17170C; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center;',
+      resetAll: function () { self.setState({ league: 'All', type: 'Any', sort: 'Newest' }); },
+
+      showRecent: q.length === 0,
+      recents: ['Tatis', 'home run props', 'Sunday parlays', 'Thunder'].map(function (label) {
+        return { label: label, pick: function () { if (self.input) { self.input.value = label; } self.setState({ q: label }); } };
+      }),
+
+      picks: shaped,
+      empty: shaped.length === 0,
+      resultCount: shaped.length + ' results'
+    };
+  }
+}
+</script>
+</body>
+</html>

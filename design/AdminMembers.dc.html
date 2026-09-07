@@ -1,0 +1,306 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #0E0E10; font-family: Manrope, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #F8D117; text-decoration: none; }
+    a:hover { color: #FFE45C; }
+    .dd-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+    .dd-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    button { font-family: inherit; cursor: pointer; border: 0; background: none; padding: 0; color: inherit; text-align: left; }
+    input { font-family: inherit; }
+    input::placeholder { color: #55555C; }
+    input:focus { outline: none; border-color: #F8D117; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 900px; background: #121214; color: #EDEDEC; display: flex; overflow: hidden;">
+
+  <div style="width: 244px; flex-shrink: 0; background: #0E0E10; border-right: 1px solid #202024; display: flex; flex-direction: column; padding: 24px 16px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 8px 26px 8px;">
+      <span style="{{markStyle}}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#121214" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"></path></svg>
+      </span>
+      <span style="{{wordmarkStyle}}">doubledub</span>
+      <span style="font-size: 8.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #55555C; padding: 3px 6px; border-radius: 5px; background: #1A1A1D;">Admin</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 3px;">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="6">
+        <div style="{{n.style}}">
+          <span style="width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{n.icon}}"></path></svg>
+          </span>
+          <span style="flex-grow: 1;">{{n.label}}</span>
+          <span style="{{n.badgeStyle}}">{{n.badge}}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="flex-grow: 1;"></div>
+    <div style="display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; background: #17171A; border: 1px solid #232327;">
+      <span style="width: 32px; height: 32px; border-radius: 999px; background: #2A2436; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #C9C9CE;">AD</span>
+      <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;">
+        <span style="font-size: 12.5px; font-weight: 500;">Admin</span>
+        <span style="font-size: 10.5px; color: #6E6E75;">owner</span>
+      </span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#55555C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9.5 6 6 6-6"></path></svg>
+    </div>
+  </div>
+
+  <div class="dd-scroll" style="flex-grow: 1; overflow-y: auto;">
+
+    <div style="display: flex; align-items: center; gap: 14px; padding: 26px 34px 22px 34px;">
+      <div style="flex-grow: 1;">
+        <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.03em;">Members</h1>
+        <p style="margin: 5px 0 0 0; font-size: 12.5px; color: #6E6E75;">{{subhead}}</p>
+      </div>
+      <button style="height: 44px; padding: 0 17px; border-radius: 11px; background: #1A1A1D; border: 1px solid #2A2A2E; font-size: 13px; font-weight: 500; color: #C9C9CE; display: flex; align-items: center; gap: 8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"></path><path d="m7.5 10.5 4.5 4.5 4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>
+        Export CSV
+      </button>
+      <button style="{{primaryBtnStyle}}">Invite member</button>
+    </div>
+
+    <div style="display: flex; gap: 14px; padding: 0 34px 22px 34px;">
+      <sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+        <div style="flex-grow: 1; padding: 17px 19px; background: #17171A; border: 1px solid #232327; border-radius: 15px;">
+          <div style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #6E6E75;">{{k.label}}</div>
+          <div style="display: flex; align-items: baseline; gap: 10px; margin-top: 10px;">
+            <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 25px; font-weight: 500; letter-spacing: -0.02em; color: #EDEDEC;">{{k.value}}</span>
+            <span style="{{k.deltaStyle}}">{{k.delta}}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 12px; padding: 0 34px 18px 34px;">
+      <div style="display: flex; align-items: center; gap: 10px; width: 320px; height: 44px; padding: 0 14px; background: #17171A; border: 1.5px solid #2A2A2E; border-radius: 12px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E6E75" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+        <input onInput="{{onQuery}}" type="text" placeholder="Search name, email or handle" style="flex-grow: 1; height: 40px; border: 0; background: transparent; color: #EDEDEC; font-size: 13.5px;">
+      </div>
+      <div style="display: flex; gap: 4px; padding: 4px; background: #17171A; border: 1px solid #232327; border-radius: 12px;">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+          <button onClick="{{t.pick}}" style="{{t.style}}">
+            <span>{{t.label}}</span>
+            <span style="{{t.countStyle}}">{{t.count}}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="flex-grow: 1;"></div>
+      <button style="height: 44px; padding: 0 15px; border-radius: 11px; background: #17171A; border: 1px solid #2A2A2E; font-size: 13px; font-weight: 500; color: #9C9CA3; display: flex; align-items: center; gap: 8px;">
+        All plans
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9.5 6 6 6-6"></path></svg>
+      </button>
+    </div>
+
+    <sc-if value="{{anySelected}}" hint-placeholder-val="{{true}}">
+      <div style="{{bulkBarStyle}}">
+        <span style="font-size: 13px; font-weight: 600; color: #17170C;">{{selectedLabel}}</span>
+        <span style="flex-grow: 1;"></span>
+        <button style="height: 36px; padding: 0 14px; border-radius: 9px; background: rgba(23, 23, 12, 0.13); font-size: 12.5px; font-weight: 600; color: #17170C; display: flex; align-items: center;">Grant free days</button>
+        <button style="height: 36px; padding: 0 14px; border-radius: 9px; background: rgba(23, 23, 12, 0.13); font-size: 12.5px; font-weight: 600; color: #17170C; display: flex; align-items: center;">Refund</button>
+        <button style="height: 36px; padding: 0 14px; border-radius: 9px; background: rgba(23, 23, 12, 0.13); font-size: 12.5px; font-weight: 600; color: #17170C; display: flex; align-items: center;">Suspend</button>
+        <button onClick="{{clearSelection}}" style="height: 36px; padding: 0 12px; font-size: 12.5px; font-weight: 600; color: #17170C; display: flex; align-items: center;">Clear</button>
+      </div>
+    </sc-if>
+
+    <div style="margin: 0 34px 34px 34px; background: #17171A; border: 1px solid #232327; border-radius: 16px; overflow: hidden;">
+
+      <div style="display: flex; align-items: center; gap: 16px; padding: 0 20px; height: 46px; background: #1B1B1F; border-bottom: 1px solid #232327; font-size: 10.5px; font-weight: 600; letter-spacing: 0.11em; text-transform: uppercase; color: #6E6E75;">
+        <span style="width: 18px; flex-shrink: 0;"></span>
+        <span style="flex-grow: 1;">Member</span>
+        <span style="width: 128px; flex-shrink: 0;">Plan</span>
+        <span style="width: 104px; flex-shrink: 0;">Status</span>
+        <span style="width: 108px; flex-shrink: 0;">Renews</span>
+        <span style="width: 100px; flex-shrink: 0; text-align: right;">Spend</span>
+        <span style="width: 74px; flex-shrink: 0; text-align: right;">Tails</span>
+        <span style="width: 100px; flex-shrink: 0; text-align: right;">Joined</span>
+        <span style="width: 34px; flex-shrink: 0;"></span>
+      </div>
+
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="7">
+        <div style="{{r.rowStyle}}">
+          <button onClick="{{r.toggle}}" style="width: 18px; height: 18px; flex-shrink: 0; padding: 0;">
+            <span style="{{r.boxStyle}}">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#17170C" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" style="{{r.checkStyle}}"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"></path></svg>
+            </span>
+          </button>
+          <span style="flex-grow: 1; display: flex; align-items: center; gap: 12px; min-width: 0;">
+            <span style="{{r.avatarStyle}}">{{r.initials}}</span>
+            <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+              <span style="font-size: 13.5px; font-weight: 500; letter-spacing: -0.01em; color: #EDEDEC;">{{r.name}}</span>
+              <span style="font-size: 11.5px; color: #6E6E75;">{{r.email}}</span>
+            </span>
+          </span>
+          <span style="width: 128px; flex-shrink: 0; font-size: 12.5px; color: #C9C9CE;">{{r.plan}}</span>
+          <span style="width: 104px; flex-shrink: 0;"><span style="{{r.statusStyle}}">{{r.status}}</span></span>
+          <span style="width: 108px; flex-shrink: 0; font-size: 12.5px; color: #9C9CA3;">{{r.renews}}</span>
+          <span style="width: 100px; flex-shrink: 0; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; color: #EDEDEC;">{{r.spend}}</span>
+          <span style="width: 74px; flex-shrink: 0; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; color: #9C9CA3;">{{r.tails}}</span>
+          <span style="width: 100px; flex-shrink: 0; text-align: right; font-size: 12.5px; color: #6E6E75;">{{r.joined}}</span>
+          <button style="width: 34px; height: 34px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #55555C;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="12" cy="19" r="1.6"></circle></svg>
+          </button>
+        </div>
+      </sc-for>
+
+      <sc-if value="{{noRows}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 60px 20px;">
+          <span style="font-size: 14px; font-weight: 600; color: #9C9CA3;">No members match</span>
+          <span style="font-size: 12.5px; color: #55555C;">Try another search term or switch status.</span>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; align-items: center; gap: 14px; padding: 15px 20px; border-top: 1px solid #232327;">
+        <span style="flex-grow: 1; font-size: 12px; color: #6E6E75;">{{pageNote}}</span>
+        <button style="height: 36px; padding: 0 14px; border-radius: 9px; background: #1E1E22; border: 1px solid #2A2A2E; font-size: 12.5px; font-weight: 500; color: #55555C; display: flex; align-items: center;">Previous</button>
+        <button style="height: 36px; padding: 0 14px; border-radius: 9px; background: #1E1E22; border: 1px solid #2A2A2E; font-size: 12.5px; font-weight: 500; color: #C9C9CE; display: flex; align-items: center;">Next</button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#F8D117","options":["#F8D117","#EDEDEC","#3FBF7F","#7C6BF5"],"section":"Brand"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  state = { tab: 'All', q: '', selected: {} };
+
+  accent() { return this.props.accent || '#F8D117'; }
+
+  members() {
+    return [
+      { id: 'u1', name: 'Jordan Mills',    email: 'jordan.mills@example.com', initials: 'JM', bg: '#2A2436', plan: '1 month',  status: 'Active',    renews: 'Oct 7',   spend: '$448.50', tails: 37,  joined: 'Mar 2026' },
+      { id: 'u2', name: 'Priya Raman',     email: 'priya.r@example.com',      initials: 'PR', bg: '#203033', plan: '1 year',   status: 'Active',    renews: 'Feb 2027', spend: '$649.50', tails: 214, joined: 'Feb 2026' },
+      { id: 'u3', name: 'Marcus Reid',     email: 'm.reid@example.com',       initials: 'MR', bg: '#33202B', plan: '3 days',   status: 'Past due',  renews: 'Sep 8',   spend: '$225.00', tails: 12,  joined: 'Aug 2026' },
+      { id: 'u4', name: 'Tina Koval',      email: 'tina.k@example.com',       initials: 'TK', bg: '#2B3320', plan: '1 week',   status: 'Active',    renews: 'Sep 11',  spend: '$149.00', tails: 48,  joined: 'Jun 2026' },
+      { id: 'u5', name: 'Alan Douglas',    email: 'alan.d@example.com',       initials: 'AD', bg: '#3B3220', plan: '6 months', status: 'Active',    renews: 'Jan 2027', spend: '$799.00', tails: 96,  joined: 'Jul 2025' },
+      { id: 'u6', name: 'Sofia Nunes',     email: 'sofia.n@example.com',      initials: 'SN', bg: '#332028', plan: '1 month',  status: 'Cancelled', renews: '—',       spend: '$299.00', tails: 21,  joined: 'Apr 2026' },
+      { id: 'u7', name: 'Devon Clarke',    email: 'devon.c@example.com',      initials: 'DC', bg: '#26303A', plan: '3 days',   status: 'Trialing',  renews: 'Sep 9',   spend: '$0.00',   tails: 3,   joined: 'Sep 2026' },
+      { id: 'u8', name: 'Hana Ito',        email: 'hana.ito@example.com',     initials: 'HI', bg: '#2E2A36', plan: '2 months', status: 'Active',    renews: 'Nov 2',   spend: '$399.00', tails: 63,  joined: 'May 2026' },
+      { id: 'u9', name: 'Wes Trainor',     email: 'wes.t@example.com',        initials: 'WT', bg: '#333020', plan: '1 week',   status: 'Past due',  renews: 'Sep 7',   spend: '$74.50',  tails: 8,   joined: 'Aug 2026' }
+    ];
+  }
+
+  renderVals() {
+    var self = this;
+    var S = this.state;
+    var accent = this.accent();
+    var q = S.q.trim().toLowerCase();
+
+    var navItems = [
+      { label: 'Dashboard',     icon: 'M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-16v4h6V4h-6Z', badge: '',    on: false },
+      { label: 'Posts',         icon: 'M5 5h14v14H5zM8 9h8M8 13h8M8 17h5',                             badge: '',    on: false },
+      { label: 'Members',       icon: 'M9 11a3.4 3.4 0 1 0 0-6.8A3.4 3.4 0 0 0 9 11Zm-6 8.5a6 6 0 0 1 12 0M16 11.4a3 3 0 0 0 0-5.9M21 19.5a5.5 5.5 0 0 0-4-5', badge: '2.1k', on: true },
+      { label: 'Subscriptions', icon: 'M3 8.5h18M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Zm4 8h4', badge: '9',   on: false },
+      { label: 'Comments',      icon: 'M20.2 11.6a7.6 7.6 0 0 1-11.1 6.8L4 19.8l1.5-4.9a7.6 7.6 0 1 1 14.7-3.3Z',                 badge: '14',  on: false },
+      { label: 'Settings',      icon: 'M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Zm7.5-3.2a7.5 7.5 0 0 1-.1 1.2l2 1.6-2 3.4-2.4-1a7.5 7.5 0 0 1-2 1.2l-.4 2.6h-4l-.4-2.6a7.5 7.5 0 0 1-2-1.2l-2.4 1-2-3.4 2-1.6a7.5 7.5 0 0 1 0-2.4l-2-1.6 2-3.4 2.4 1a7.5 7.5 0 0 1 2-1.2L10.6 3h4l.4 2.6a7.5 7.5 0 0 1 2 1.2l2.4-1 2 3.4-2 1.6c.1.4.1.8.1 1.2Z', badge: '', on: false }
+    ];
+    var nav = navItems.map(function (n) {
+      return {
+        label: n.label, icon: n.icon, badge: n.badge,
+        style: 'display: flex; align-items: center; gap: 11px; height: 44px; padding: 0 12px; border-radius: 10px; font-size: 13.5px; font-weight: 500; '
+          + (n.on ? 'background: #1E1E22; color: ' + accent + ';' : 'color: #8C8C93;'),
+        badgeStyle: n.badge
+          ? 'font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10.5px; font-weight: 500; color: #6E6E75; background: #232328; padding: 3px 7px; border-radius: 6px;'
+          : 'display: none;'
+      };
+    });
+
+    var all = this.members();
+    var counts = { All: all.length, Active: 0, Trialing: 0, 'Past due': 0, Cancelled: 0 };
+    all.forEach(function (m) { counts[m.status] = (counts[m.status] || 0) + 1; });
+
+    var tabs = ['All', 'Active', 'Trialing', 'Past due', 'Cancelled'].map(function (label) {
+      var on = label === S.tab;
+      return {
+        label: label,
+        count: counts[label] || 0,
+        style: 'display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 13px; border-radius: 9px; font-size: 12.5px; font-weight: 500; '
+          + (on ? 'background: ' + accent + '; color: #17170C;' : 'color: #8C8C93;'),
+        countStyle: 'font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10.5px; font-weight: 500; padding: 2px 6px; border-radius: 5px; '
+          + (on ? 'background: rgba(23, 23, 12, 0.15); color: #17170C;' : 'background: #232328; color: #6E6E75;'),
+        pick: function () { self.setState({ tab: label }); }
+      };
+    });
+
+    var palette = {
+      Active:      { fg: '#3FBF7F', bg: 'rgba(63, 191, 127, 0.12)' },
+      Trialing:    { fg: '#7FA9E8', bg: 'rgba(127, 169, 232, 0.12)' },
+      'Past due':  { fg: '#E0A23C', bg: 'rgba(224, 162, 60, 0.13)' },
+      Cancelled:   { fg: '#8C8C93', bg: '#26262B' }
+    };
+
+    var filtered = all.filter(function (m) {
+      if (S.tab !== 'All' && m.status !== S.tab) { return false; }
+      if (q && (m.name + ' ' + m.email).toLowerCase().indexOf(q) < 0) { return false; }
+      return true;
+    });
+
+    var selectedCount = 0;
+    Object.keys(S.selected).forEach(function (k) { if (S.selected[k]) { selectedCount = selectedCount + 1; } });
+
+    var rows = filtered.map(function (m) {
+      var on = !!S.selected[m.id];
+      var c = palette[m.status];
+      return {
+        name: m.name, email: m.email, initials: m.initials, plan: m.plan, status: m.status,
+        renews: m.renews, spend: m.spend, tails: m.tails, joined: m.joined,
+        rowStyle: 'display: flex; align-items: center; gap: 16px; padding: 0 20px; height: 68px; border-bottom: 1px solid #202024; '
+          + (on ? 'background: rgba(248, 209, 23, 0.045);' : ''),
+        boxStyle: 'width: 18px; height: 18px; border-radius: 5px; display: flex; align-items: center; justify-content: center; '
+          + (on ? 'background: ' + accent + '; border: 1.5px solid ' + accent + ';' : 'background: #1E1E22; border: 1.5px solid #3A3A41;'),
+        checkStyle: on ? '' : 'display: none;',
+        avatarStyle: 'width: 34px; height: 34px; flex-shrink: 0; border-radius: 10px; background: ' + m.bg + '; border: 1px solid #3A3A41; display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 700; color: ' + accent + ';',
+        statusStyle: 'display: inline-flex; align-items: center; height: 25px; padding: 0 10px; border-radius: 7px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; background: ' + c.bg + '; color: ' + c.fg + ';',
+        toggle: function () { var next = Object.assign({}, S.selected); next[m.id] = !on; self.setState({ selected: next }); }
+      };
+    });
+
+    return {
+      accent: accent,
+      markStyle: 'width: 28px; height: 28px; flex-shrink: 0; border-radius: 9px; background: ' + accent + '; display: flex; align-items: center; justify-content: center;',
+      wordmarkStyle: 'flex-grow: 1; font-size: 16px; font-weight: 700; letter-spacing: -0.05em; color: ' + accent + ';',
+      nav: nav,
+
+      subhead: '2,148 registered  ·  1,392 on an active plan  ·  9 payments need attention',
+      primaryBtnStyle: 'height: 44px; padding: 0 20px; border-radius: 11px; background: ' + accent + '; color: #17170C; font-size: 13.5px; font-weight: 700; display: flex; align-items: center;',
+
+      kpis: [
+        { label: 'Active subscriptions', value: '1,392', delta: '+68 this month',  color: '#3FBF7F' },
+        { label: 'Monthly revenue',      value: '$61,480', delta: '+11.4%',        color: '#3FBF7F' },
+        { label: 'Avg. lifetime value',  value: '$284',  delta: '+$19',            color: '#3FBF7F' },
+        { label: 'Churn, 30 days',       value: '4.2%',  delta: '+0.6 pts',        color: '#D6564F' }
+      ].map(function (k) {
+        return {
+          label: k.label, value: k.value, delta: k.delta,
+          deltaStyle: 'font-size: 11.5px; font-weight: 600; color: ' + k.color + ';'
+        };
+      }),
+
+      tabs: tabs,
+      onQuery: function (e) { self.setState({ q: e.target.value }); },
+
+      rows: rows,
+      noRows: rows.length === 0,
+      pageNote: 'Showing ' + rows.length + ' of 2,148 members',
+
+      anySelected: selectedCount > 0,
+      selectedLabel: selectedCount + (selectedCount === 1 ? ' member selected' : ' members selected'),
+      bulkBarStyle: 'display: flex; align-items: center; gap: 10px; margin: 0 34px 14px 34px; padding: 12px 18px; border-radius: 13px; background: ' + accent + ';',
+      clearSelection: function () { self.setState({ selected: {} }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

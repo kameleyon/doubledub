@@ -1,0 +1,416 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #0E0E10; font-family: Manrope, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #F8D117; text-decoration: none; }
+    a:hover { color: #FFE45C; }
+    .dd-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+    .dd-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    button { font-family: inherit; cursor: pointer; border: 0; background: none; padding: 0; color: inherit; text-align: left; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 900px; background: #121214; color: #EDEDEC; display: flex; overflow: hidden;">
+
+  <div style="width: 244px; flex-shrink: 0; background: #0E0E10; border-right: 1px solid #202024; display: flex; flex-direction: column; padding: 24px 16px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 8px 26px 8px;">
+      <span style="{{markStyle}}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#121214" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"></path></svg>
+      </span>
+      <span style="{{wordmarkStyle}}">doubledub</span>
+      <span style="font-size: 8.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #55555C; padding: 3px 6px; border-radius: 5px; background: #1A1A1D;">Admin</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 3px;">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="6">
+        <div style="{{n.style}}">
+          <span style="width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{n.icon}}"></path></svg>
+          </span>
+          <span style="flex-grow: 1;">{{n.label}}</span>
+          <span style="{{n.badgeStyle}}">{{n.badge}}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="flex-grow: 1;"></div>
+    <div style="display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; background: #17171A; border: 1px solid #232327;">
+      <span style="width: 32px; height: 32px; border-radius: 999px; background: #2A2436; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #C9C9CE;">AD</span>
+      <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;">
+        <span style="font-size: 12.5px; font-weight: 500;">Admin</span>
+        <span style="font-size: 10.5px; color: #6E6E75;">owner</span>
+      </span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#55555C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9.5 6 6 6-6"></path></svg>
+    </div>
+  </div>
+
+  <div class="dd-scroll" style="flex-grow: 1; overflow-y: auto; padding: 26px 34px 34px 34px;">
+
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <div style="flex-grow: 1;">
+        <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.03em;">Dashboard</h1>
+        <p style="margin: 5px 0 0 0; font-size: 12.5px; color: #6E6E75;">{{subhead}}</p>
+      </div>
+      <div style="display: flex; gap: 4px; padding: 4px; background: #17171A; border: 1px solid #232327; border-radius: 12px;">
+        <sc-for list="{{periods}}" as="p" hint-placeholder-count="3">
+          <button onClick="{{p.pick}}" style="{{p.style}}">{{p.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 16px; margin-top: 22px;">
+      <sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+        <div style="flex-grow: 1; flex-basis: 0; padding: 18px 20px; background: #17171A; border: 1px solid #232327; border-radius: 16px;">
+          <div style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #6E6E75;">{{k.label}}</div>
+          <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin-top: 12px;">
+            <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 27px; font-weight: 500; letter-spacing: -0.025em; color: #EDEDEC; line-height: 1;">{{k.value}}</span>
+            <svg width="82" height="26" viewBox="0 0 82 26" fill="none" style="flex-shrink: 0; opacity: 0.85;">
+              <polyline points="{{k.spark}}" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+            </svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; margin-top: 11px;">
+            <span style="{{k.arrowStyle}}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5.5"></path><path d="m6.5 11 5.5-5.5 5.5 5.5"></path></svg>
+            </span>
+            <span style="{{k.deltaStyle}}">{{k.delta}}</span>
+            <span style="font-size: 11.5px; color: #55555C;">{{k.deltaNote}}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; gap: 16px; margin-top: 16px; align-items: stretch;">
+
+      <div style="flex-grow: 1; padding: 20px 22px 22px 22px; background: #17171A; border: 1px solid #232327; border-radius: 16px;">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+          <div>
+            <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.015em; color: #EDEDEC;">Subscription revenue</div>
+            <div style="font-size: 11.5px; color: #6E6E75; margin-top: 4px;">{{chartSub}}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 20px; font-weight: 500; color: #EDEDEC; line-height: 1.1;">{{readoutValue}}</div>
+            <div style="font-size: 11px; color: #6E6E75; margin-top: 4px;">{{readoutLabel}}</div>
+          </div>
+        </div>
+
+        <div style="position: relative; height: 196px; margin-top: 22px;">
+          <sc-for list="{{gridlines}}" as="g" hint-placeholder-count="4">
+            <div style="{{g.lineStyle}}"></div>
+          </sc-for>
+          <sc-for list="{{gridlines}}" as="g" hint-placeholder-count="4">
+            <div style="{{g.labelStyle}}">{{g.label}}</div>
+          </sc-for>
+          <div style="{{plotStyle}}">
+            <sc-for list="{{bars}}" as="b" hint-placeholder-count="12">
+              <div onMouseEnter="{{b.enter}}" onMouseLeave="{{b.leave}}" style="{{b.colStyle}}">
+                <span style="{{b.labelStyle}}">{{b.labelText}}</span>
+                <span style="{{b.barStyle}}"></span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="position: absolute; left: 50px; right: 0; bottom: 0; height: 1px; background: #34343A;"></div>
+        </div>
+
+        <div style="display: flex; gap: {{barGap}}px; padding-left: 50px; margin-top: 9px;">
+          <sc-for list="{{bars}}" as="b" hint-placeholder-count="12">
+            <div style="{{b.tickStyle}}">{{b.tick}}</div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="width: 356px; flex-shrink: 0; padding: 20px 22px; background: #17171A; border: 1px solid #232327; border-radius: 16px;">
+        <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.015em; color: #EDEDEC;">Plan mix</div>
+        <div style="font-size: 11.5px; color: #6E6E75; margin-top: 4px;">1,392 active subscriptions by term</div>
+
+        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+          <sc-for list="{{planMix}}" as="p" hint-placeholder-count="5">
+            <div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px;">
+                <span style="font-size: 12.5px; font-weight: 500; color: #C9C9CE;">{{p.label}}</span>
+                <span style="display: flex; align-items: baseline; gap: 9px;">
+                  <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; font-weight: 500; color: #EDEDEC;">{{p.count}}</span>
+                  <span style="font-size: 11px; color: #55555C; width: 32px; text-align: right;">{{p.pct}}</span>
+                </span>
+              </div>
+              <div style="height: 8px; margin-top: 7px; border-radius: 999px; background: #232328; overflow: hidden;">
+                <div style="{{p.barStyle}}"></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="height: 1px; background: #232327; margin: 20px 0 16px 0;"></div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 12.5px; color: #8C8C93;">Average term length</span>
+          <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #EDEDEC;">78 days</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 11px;">
+          <span style="font-size: 12.5px; color: #8C8C93;">Promo codes redeemed</span>
+          <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #EDEDEC;">218</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 11px;">
+          <span style="font-size: 12.5px; color: #8C8C93;">Failed payments to retry</span>
+          <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #E0A23C;">9</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 16px; padding: 20px 22px 8px 22px; background: #17171A; border: 1px solid #232327; border-radius: 16px;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between;">
+        <div>
+          <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.015em; color: #EDEDEC;">Top posts</div>
+          <div style="font-size: 11.5px; color: #6E6E75; margin-top: 4px;">{{postsSub}}</div>
+        </div>
+        <button style="height: 36px; padding: 0 14px; border-radius: 9px; background: #1E1E22; border: 1px solid #2A2A2E; font-size: 12.5px; font-weight: 500; color: #C9C9CE; display: flex; align-items: center;">View all posts</button>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px; padding: 0 4px; height: 40px; margin-top: 12px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.11em; text-transform: uppercase; color: #6E6E75; border-bottom: 1px solid #232327;">
+        <span style="flex-grow: 1;">Post</span>
+        <span style="width: 84px; flex-shrink: 0; text-align: right;">Views</span>
+        <span style="width: 72px; flex-shrink: 0; text-align: right;">Tails</span>
+        <span style="width: 90px; flex-shrink: 0; text-align: right;">Comments</span>
+        <span style="width: 116px; flex-shrink: 0; text-align: right;">Tail rate</span>
+      </div>
+
+      <sc-for list="{{topPosts}}" as="p" hint-placeholder-count="4">
+        <div style="display: flex; align-items: center; gap: 16px; padding: 0 4px; height: 56px; border-bottom: 1px solid #202024;">
+          <span style="flex-grow: 1; display: flex; align-items: center; gap: 11px; min-width: 0;">
+            <span style="{{p.kindStyle}}">{{p.kind}}</span>
+            <span style="font-size: 13px; font-weight: 500; color: #EDEDEC;">{{p.title}}</span>
+          </span>
+          <span style="width: 84px; flex-shrink: 0; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; color: #EDEDEC;">{{p.views}}</span>
+          <span style="width: 72px; flex-shrink: 0; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; color: #EDEDEC;">{{p.tails}}</span>
+          <span style="width: 90px; flex-shrink: 0; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; color: #9C9CA3;">{{p.comments}}</span>
+          <span style="width: 116px; flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+            <span style="width: 48px; height: 6px; border-radius: 999px; background: #232328; overflow: hidden; display: block;"><span style="{{p.rateBarStyle}}"></span></span>
+            <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #C9C9CE; width: 40px; text-align: right;">{{p.rate}}</span>
+          </span>
+        </div>
+      </sc-for>
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#F8D117","options":["#F8D117","#EDEDEC","#3FBF7F","#7C6BF5"],"section":"Brand"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  state = { period: '12 months', hover: -1 };
+
+  accent() { return this.props.accent || '#F8D117'; }
+
+  series() {
+    return {
+      '7 days': {
+        total: '$14,208',
+        sub: 'Daily net revenue, last 7 days',
+        ticks: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        values: [1620, 1480, 1795, 2040, 2380, 2620, 2273]
+      },
+      '30 days': {
+        total: '$63,240',
+        sub: 'Daily net revenue, last 30 days',
+        ticks: ['1','','','','5','','','','','10','','','','','15','','','','','20','','','','','25','','','','','30'],
+        values: [1780,1620,1540,1900,2120,1980,1740,1660,1820,2240,2380,2100,1960,1880,2020,2260,2440,2180,2020,1940,2140,2380,2560,2300,2160,2080,2300,2520,2740,2480]
+      },
+      '12 months': {
+        total: '$581,780',
+        sub: 'Monthly net revenue, last 12 months',
+        ticks: ['Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'],
+        values: [34200, 38600, 41800, 52400, 49100, 46800, 44200, 47600, 51300, 55900, 58400, 61480]
+      }
+    };
+  }
+
+  money(n) {
+    if (n >= 1000) { return '$' + (n / 1000).toFixed(1) + 'k'; }
+    return '$' + Math.round(n);
+  }
+
+  full(n) {
+    var s = String(Math.round(n));
+    var out = '';
+    var c = 0;
+    for (var i = s.length - 1; i >= 0; i--) {
+      out = s.charAt(i) + out;
+      c = c + 1;
+      if (c % 3 === 0 && i > 0) { out = ',' + out; }
+    }
+    return '$' + out;
+  }
+
+  renderVals() {
+    var self = this;
+    var S = this.state;
+    var accent = this.accent();
+
+    var navItems = [
+      { label: 'Dashboard',     icon: 'M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-16v4h6V4h-6Z', badge: '',    on: true },
+      { label: 'Posts',         icon: 'M5 5h14v14H5zM8 9h8M8 13h8M8 17h5',                             badge: '',    on: false },
+      { label: 'Members',       icon: 'M9 11a3.4 3.4 0 1 0 0-6.8A3.4 3.4 0 0 0 9 11Zm-6 8.5a6 6 0 0 1 12 0M16 11.4a3 3 0 0 0 0-5.9M21 19.5a5.5 5.5 0 0 0-4-5', badge: '2.1k', on: false },
+      { label: 'Subscriptions', icon: 'M3 8.5h18M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Zm4 8h4', badge: '9',   on: false },
+      { label: 'Comments',      icon: 'M20.2 11.6a7.6 7.6 0 0 1-11.1 6.8L4 19.8l1.5-4.9a7.6 7.6 0 1 1 14.7-3.3Z',                 badge: '14',  on: false },
+      { label: 'Settings',      icon: 'M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Zm7.5-3.2a7.5 7.5 0 0 1-.1 1.2l2 1.6-2 3.4-2.4-1a7.5 7.5 0 0 1-2 1.2l-.4 2.6h-4l-.4-2.6a7.5 7.5 0 0 1-2-1.2l-2.4 1-2-3.4 2-1.6a7.5 7.5 0 0 1 0-2.4l-2-1.6 2-3.4 2.4 1a7.5 7.5 0 0 1 2-1.2L10.6 3h4l.4 2.6a7.5 7.5 0 0 1 2 1.2l2.4-1 2 3.4-2 1.6c.1.4.1.8.1 1.2Z', badge: '', on: false }
+    ];
+    var nav = navItems.map(function (n) {
+      return {
+        label: n.label, icon: n.icon, badge: n.badge,
+        style: 'display: flex; align-items: center; gap: 11px; height: 44px; padding: 0 12px; border-radius: 10px; font-size: 13.5px; font-weight: 500; '
+          + (n.on ? 'background: #1E1E22; color: ' + accent + ';' : 'color: #8C8C93;'),
+        badgeStyle: n.badge
+          ? 'font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10.5px; font-weight: 500; color: #6E6E75; background: #232328; padding: 3px 7px; border-radius: 6px;'
+          : 'display: none;'
+      };
+    });
+
+    var periods = ['7 days', '30 days', '12 months'].map(function (label) {
+      var on = label === S.period;
+      return {
+        label: label,
+        style: 'height: 36px; padding: 0 15px; border-radius: 9px; font-size: 12.5px; font-weight: 500; display: flex; align-items: center; '
+          + (on ? 'background: ' + accent + '; color: #17170C;' : 'color: #8C8C93;'),
+        pick: function () { self.setState({ period: label, hover: -1 }); }
+      };
+    });
+
+    var s = this.series()[S.period];
+    var vals = s.values;
+    var n = vals.length;
+    var plotH = 196;
+
+    var max = 0;
+    for (var i = 0; i < n; i++) { if (vals[i] > max) { max = vals[i]; } }
+    var top = max * 1.14;
+    var maxIndex = vals.indexOf(max);
+    var gap = n > 20 ? 4 : (n > 10 ? 11 : 20);
+    var labelled = n <= 12;
+
+    var bars = [];
+    for (var j = 0; j < n; j++) {
+      var v = vals[j];
+      var hPx = (v / top) * plotH;
+      var hovered = S.hover === j;
+      bars.push({
+        tick: s.ticks[j] || '',
+        tickStyle: 'flex-grow: 1; flex-basis: 0; text-align: center; font-size: 10px; letter-spacing: -0.01em; color: '
+          + (hovered ? '#C9C9CE;' : '#55555C;'),
+        colStyle: 'flex-grow: 1; flex-basis: 0; height: 100%; position: relative; display: flex; align-items: flex-end; border-radius: 5px 5px 0 0; '
+          + (hovered ? 'background: rgba(237, 237, 236, 0.04);' : ''),
+        barStyle: 'display: block; width: 100%; height: ' + hPx.toFixed(1) + 'px; border-radius: 4px 4px 0 0; background: '
+          + (hovered ? '#FFE45C;' : accent + ';'),
+        labelText: self.money(v),
+        labelStyle: (labelled && (j === maxIndex || j === n - 1) && !hovered)
+          ? 'position: absolute; left: -6px; right: -6px; bottom: ' + (hPx + 7).toFixed(1) + 'px; text-align: center; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10px; font-weight: 500; color: #9C9CA3;'
+          : 'display: none;'
+      });
+    }
+    for (var k = 0; k < n; k++) {
+      (function (idx) {
+        bars[idx].enter = function () { self.setState({ hover: idx }); };
+        bars[idx].leave = function () { self.setState({ hover: -1 }); };
+      })(k);
+    }
+
+    var gridlines = [];
+    for (var g = 1; g <= 4; g++) {
+      var gv = (top / 4) * g;
+      var gy = plotH - (gv / top) * plotH;
+      gridlines.push({
+        label: self.money(gv),
+        lineStyle: 'position: absolute; left: 50px; right: 0; top: ' + gy.toFixed(1) + 'px; height: 1px; background: #26262B;',
+        labelStyle: 'position: absolute; left: 0; width: 42px; top: ' + (gy - 6).toFixed(1) + 'px; text-align: right; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10px; color: #55555C;'
+      });
+    }
+
+    var hoverOn = S.hover >= 0;
+
+    var planRaw = [
+      { label: '1 month',  count: 486 },
+      { label: '1 year',   count: 312 },
+      { label: '3 days',   count: 268 },
+      { label: '1 week',   count: 174 },
+      { label: '6 months', count: 152 }
+    ];
+    var planMix = planRaw.map(function (p) {
+      return {
+        label: p.label,
+        count: p.count,
+        pct: Math.round((p.count / 1392) * 100) + '%',
+        barStyle: 'width: ' + ((p.count / 486) * 100).toFixed(1) + '%; height: 100%; border-radius: 999px; background: ' + accent + ';'
+      };
+    });
+
+    var kpiRaw = [
+      { label: 'Net revenue',    value: s.total, delta: '+11.4%', note: 'vs. previous',    up: true,  spark: [8, 12, 10, 15, 13, 18, 21] },
+      { label: 'Active members', value: '1,392', delta: '+68',    note: 'new this period', up: true,  spark: [10, 11, 13, 12, 16, 18, 20] },
+      { label: 'Tail rate',      value: '31.4%', delta: '+2.8',   note: 'points',          up: true,  spark: [9, 13, 11, 14, 16, 15, 19] },
+      { label: 'Churn',          value: '4.2%',  delta: '+0.6',   note: 'points',          up: false, spark: [7, 8, 10, 9, 12, 14, 16] }
+    ];
+    var kpis = kpiRaw.map(function (k) {
+      var pts = [];
+      for (var q = 0; q < k.spark.length; q++) {
+        var px = 2 + q * (78 / (k.spark.length - 1));
+        var py = 24 - (k.spark[q] / 22) * 20;
+        pts.push(px.toFixed(1) + ',' + py.toFixed(1));
+      }
+      var color = k.up ? '#3FBF7F' : '#D6564F';
+      return {
+        label: k.label, value: k.value, delta: k.delta, deltaNote: k.note,
+        spark: pts.join(' '),
+        deltaStyle: 'font-size: 12px; font-weight: 600; color: ' + color + ';',
+        arrowStyle: 'display: flex; align-items: center; color: ' + color + ';'
+          + (k.up ? '' : ' transform: rotate(180deg);')
+      };
+    });
+
+    var topPosts = [
+      { kind: 'Slip', title: 'Tatis + Crow-Armstrong HR parlay',   views: '4,182', tails: '612', comments: '148', rate: '14.6%', r: 0.62 },
+      { kind: 'Text', title: 'Anthony Edwards Over 26.5 PTS', views: '3,940', tails: '548', comments: '96',  rate: '13.9%', r: 0.56 },
+      { kind: 'Slip', title: 'Sunday early window ladder',  views: '3,104', tails: '331', comments: '74',  rate: '10.7%', r: 0.42 },
+      { kind: 'Text', title: 'Alexander Blockx ML',  views: '2,268', tails: '204', comments: '41',  rate: '9.0%',  r: 0.34 }
+    ].map(function (p) {
+      return {
+        kind: p.kind, title: p.title, views: p.views, tails: p.tails, comments: p.comments, rate: p.rate,
+        kindStyle: 'flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 22px; border-radius: 6px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; '
+          + (p.kind === 'Slip' ? 'background: rgba(248, 209, 23, 0.13); color: ' + accent + ';' : 'background: #232328; color: #9C9CA3;'),
+        rateBarStyle: 'display: block; width: ' + (p.r * 100) + '%; height: 100%; border-radius: 999px; background: ' + accent + ';'
+      };
+    });
+
+    return {
+      accent: accent,
+      markStyle: 'width: 28px; height: 28px; flex-shrink: 0; border-radius: 9px; background: ' + accent + '; display: flex; align-items: center; justify-content: center;',
+      wordmarkStyle: 'flex-grow: 1; font-size: 16px; font-weight: 700; letter-spacing: -0.05em; color: ' + accent + ';',
+      nav: nav,
+      subhead: 'Monday, September 7, 2026  ·  9 payments need attention  ·  3 posts scheduled',
+
+      periods: periods,
+      chartSub: s.sub,
+      readoutValue: hoverOn ? this.full(vals[S.hover]) : s.total,
+      readoutLabel: hoverOn ? s.ticks[S.hover] || 'Selected period' : 'Total, last ' + S.period,
+
+      gridlines: gridlines,
+      bars: bars,
+      barGap: gap,
+      plotStyle: 'position: absolute; left: 50px; right: 0; top: 0; bottom: 0; display: flex; align-items: flex-end; gap: ' + gap + 'px;',
+
+      planMix: planMix,
+      kpis: kpis,
+      topPosts: topPosts,
+      postsSub: 'Ranked by tail rate over the last ' + S.period
+    };
+  }
+}
+</script>
+</body>
+</html>

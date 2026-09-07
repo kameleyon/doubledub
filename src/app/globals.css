@@ -1,0 +1,65 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens lifted from the approved canvas so the UI work has one source
+ * of truth. Charcoal dark, single yellow accent, Manrope + IBM Plex Mono.
+ * Status colours are reserved for state and are never used decoratively.
+ */
+@theme {
+  --color-bg: #121214;
+  --color-surface: #1a1a1d;
+  --color-surface-2: #212126;
+  --color-surface-3: #232328;
+  --color-line: #2a2a2e;
+  --color-line-strong: #34343a;
+
+  --color-ink: #ededec;
+  --color-ink-2: #9c9ca3;
+  --color-ink-3: #6e6e75;
+  --color-ink-4: #55555c;
+
+  --color-accent: #f8d117;
+  --color-accent-bright: #ffe45c;
+  --color-on-accent: #17170c;
+
+  --color-good: #3fbf7f;
+  --color-warn: #e0a23c;
+  --color-bad: #d6564f;
+
+  --font-sans: Manrope, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+  --radius-card: 16px;
+  --radius-control: 12px;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  /* Respects the iOS notch and home indicator once installed to the home screen. */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+/* Members cannot share posts, so make casual copying of slip images awkward.
+   This is friction, not protection — a screenshot is always possible. */
+[data-no-copy] {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+[data-no-copy] img {
+  pointer-events: none;
+}

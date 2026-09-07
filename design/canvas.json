@@ -1,0 +1,37 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Member app" },
+    { "id": "page-2", "name": "Admin cPanel" }
+  ],
+  "artboards": [
+    { "file": "Onboarding.dc.html", "title": "1 · Sign up",      "page": "page-1", "x": 0,    "y": 0,   "w": 390, "h": 844, "is_interactive": true },
+    { "file": "Paywall.dc.html",    "title": "2 · Membership",   "page": "page-1", "x": 470,  "y": 0,   "w": 390, "h": 844, "is_interactive": true },
+    { "file": "Main.dc.html",       "title": "3 · Feed",         "page": "page-1", "x": 940,  "y": 0,   "w": 390, "h": 844, "is_interactive": true },
+    { "file": "Search.dc.html",     "title": "4 · Search",       "page": "page-1", "x": 0,    "y": 984, "w": 390, "h": 844, "is_interactive": true },
+    { "file": "PostDetail.dc.html", "title": "5 · Pick detail",  "page": "page-1", "x": 470,  "y": 984, "w": 390, "h": 844, "is_interactive": true },
+    { "file": "Profile.dc.html",    "title": "6 · Profile",      "page": "page-1", "x": 940,  "y": 984, "w": 390, "h": 844, "is_interactive": true },
+
+    { "file": "AdminDashboard.dc.html", "title": "Dashboard",  "page": "page-2", "x": 0,    "y": 0, "w": 1440, "h": 900, "is_interactive": true },
+    { "file": "AdminCompose.dc.html",   "title": "New post",   "page": "page-2", "x": 1540, "y": 0, "w": 1440, "h": 900, "is_interactive": true },
+    { "file": "AdminMembers.dc.html",   "title": "Members",    "page": "page-2", "x": 3080, "y": 0, "w": 1440, "h": 900, "is_interactive": true }
+  ],
+  "annotations": [
+    {
+      "id": "app-note",
+      "page": "page-1",
+      "x": 0,
+      "y": -168,
+      "w": 620,
+      "text": "MEMBER APP — 390 × 844\n\nLive controls: feed filter chips, like + tail toggles, search that filters as you type, the paywall plan picker (total and CTA recalculate), profile tabs, the comment box on the pick detail.\n\nPricing is the sample ladder from your reference screenshot, not final numbers."
+    },
+    {
+      "id": "admin-note",
+      "page": "page-2",
+      "x": 0,
+      "y": -168,
+      "w": 620,
+      "text": "ADMIN cPANEL — 1440 × 900\n\nLive controls: post type switch (slip image / text pick) redraws both the form and the live phone preview, upload vs. empty drop state, add and remove pick legs, audience picker, member table filters + bulk select bar, dashboard period switch with per-bar hover."
+    }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}

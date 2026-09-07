@@ -1,0 +1,439 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #0E0E10; font-family: Manrope, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #F8D117; text-decoration: none; }
+    a:hover { color: #FFE45C; }
+    .dd-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+    .dd-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    button { font-family: inherit; cursor: pointer; border: 0; background: none; padding: 0; color: inherit; text-align: left; }
+    input, textarea { font-family: inherit; }
+    input::placeholder, textarea::placeholder { color: #55555C; }
+    input:focus, textarea:focus { outline: none; border-color: #F8D117; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 900px; background: #121214; color: #EDEDEC; display: flex; overflow: hidden;">
+
+  <div style="width: 244px; flex-shrink: 0; background: #0E0E10; border-right: 1px solid #202024; display: flex; flex-direction: column; padding: 24px 16px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 8px 26px 8px;">
+      <span style="{{markStyle}}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#121214" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"></path></svg>
+      </span>
+      <span style="{{wordmarkStyle}}">doubledub</span>
+      <span style="font-size: 8.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #55555C; padding: 3px 6px; border-radius: 5px; background: #1A1A1D;">Admin</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 3px;">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="6">
+        <div style="{{n.style}}">
+          <span style="width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{n.icon}}"></path></svg>
+          </span>
+          <span style="flex-grow: 1;">{{n.label}}</span>
+          <span style="{{n.badgeStyle}}">{{n.badge}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="flex-grow: 1;"></div>
+
+    <div style="display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; background: #17171A; border: 1px solid #232327;">
+      <span style="width: 32px; height: 32px; border-radius: 999px; background: #2A2436; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #C9C9CE;">AD</span>
+      <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;">
+        <span style="font-size: 12.5px; font-weight: 500;">Admin</span>
+        <span style="font-size: 10.5px; color: #6E6E75;">owner</span>
+      </span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#55555C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9.5 6 6 6-6"></path></svg>
+    </div>
+  </div>
+
+  <div class="dd-scroll" style="flex-grow: 1; overflow-y: auto;">
+
+    <div style="display: flex; align-items: center; gap: 16px; padding: 26px 34px; border-bottom: 1px solid #202024;">
+      <div style="flex-grow: 1;">
+        <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.03em;">New post</h1>
+        <p style="margin: 5px 0 0 0; font-size: 12.5px; color: #6E6E75;">{{draftNote}}</p>
+      </div>
+      <button style="height: 44px; padding: 0 18px; border-radius: 11px; background: #1A1A1D; border: 1px solid #2A2A2E; font-size: 13px; font-weight: 500; color: #C9C9CE; display: flex; align-items: center;">Save draft</button>
+      <button style="height: 44px; padding: 0 18px; border-radius: 11px; background: #1A1A1D; border: 1px solid #2A2A2E; font-size: 13px; font-weight: 500; color: #C9C9CE; display: flex; align-items: center;">Preview</button>
+      <button style="{{publishStyle}}">{{publishLabel}}</button>
+    </div>
+
+    <div style="display: flex; gap: 30px; padding: 28px 34px 40px 34px; align-items: flex-start;">
+
+      <div style="flex-grow: 1; max-width: 660px; display: flex; flex-direction: column; gap: 22px;">
+
+        <div>
+          <div style="{{sectionLabelStyle}}">Post type</div>
+          <div style="display: flex; gap: 10px; margin-top: 11px;">
+            <button onClick="{{pickImage}}" style="{{imageTypeStyle}}">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.6"></rect><circle cx="9" cy="9.5" r="1.6"></circle><path d="m4 16.5 4.4-4.2 3.4 3.1 3-2.6 5.2 4.7"></path></svg>
+              <span style="display: flex; flex-direction: column; gap: 3px;">
+                <span style="font-size: 13.5px; font-weight: 600;">Betting slip image</span>
+                <span style="font-size: 11.5px; font-weight: 500; opacity: 0.72;">Upload or paste a screenshot</span>
+              </span>
+            </button>
+            <button onClick="{{pickText}}" style="{{textTypeStyle}}">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6.5V5h14v1.5"></path><path d="M12 5v14"></path><path d="M9 19h6"></path></svg>
+              <span style="display: flex; flex-direction: column; gap: 3px;">
+                <span style="font-size: 13.5px; font-weight: 600;">Text pick</span>
+                <span style="font-size: 11.5px; font-weight: 500; opacity: 0.72;">Type the selection and odds</span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <sc-if value="{{isImage}}" hint-placeholder-val="{{true}}">
+          <div>
+            <div style="{{sectionLabelStyle}}">Slip image</div>
+
+            <sc-if value="{{noFile}}" hint-placeholder-val="{{true}}">
+              <button onClick="{{attach}}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 13px; width: 100%; height: 208px; margin-top: 11px; border-radius: 15px; background: #17171A; border: 1.5px dashed #34343A;">
+                <span style="width: 50px; height: 50px; border-radius: 15px; background: #1F1F23; display: flex; align-items: center; justify-content: center;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8C8C93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16.5V4.5"></path><path d="m7.5 9 4.5-4.5L16.5 9"></path><path d="M4.5 15v3.5a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5V15"></path></svg>
+                </span>
+                <span style="font-size: 14px; font-weight: 500; color: #C9C9CE;">Drop a screenshot, or paste with Ctrl + V</span>
+                <span style="display: flex; align-items: center; gap: 9px;">
+                  <span style="height: 38px; padding: 0 15px; border-radius: 10px; background: #232328; border: 1px solid #2E2E34; font-size: 12.5px; font-weight: 500; color: #C9C9CE; display: flex; align-items: center;">Browse files</span>
+                  <span style="font-size: 11.5px; color: #55555C;">PNG or JPG, up to 10 MB</span>
+                </span>
+              </button>
+            </sc-if>
+
+            <sc-if value="{{hasFile}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; align-items: center; gap: 15px; width: 100%; padding: 15px; margin-top: 11px; border-radius: 15px; background: #17171A; border: 1px solid #2A2A2E;">
+                <span style="width: 74px; height: 74px; flex-shrink: 0; border-radius: 11px; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column;">
+                  <span style="height: 17px; background: #16C264; flex-shrink: 0;"></span>
+                  <span style="flex-grow: 1; padding: 7px; display: flex; flex-direction: column; gap: 5px;">
+                    <span style="height: 4px; width: 84%; border-radius: 2px; background: #C9D2DE;"></span>
+                    <span style="height: 4px; width: 62%; border-radius: 2px; background: #E1E6ED;"></span>
+                    <span style="height: 4px; width: 74%; border-radius: 2px; background: #C9D2DE;"></span>
+                    <span style="height: 4px; width: 48%; border-radius: 2px; background: #E1E6ED;"></span>
+                  </span>
+                </span>
+                <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 5px;">
+                  <span style="font-size: 13.5px; font-weight: 500; color: #EDEDEC;">tatis-pca-parlay.png</span>
+                  <span style="font-size: 11.5px; color: #6E6E75;">Pasted from clipboard &nbsp;·&nbsp; 428 KB &nbsp;·&nbsp; 828 × 1284</span>
+                  <span style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 500; color: #3FBF7F; margin-top: 2px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9.5 16.5 4 11"></path></svg>
+                    Uploaded
+                  </span>
+                </span>
+                <button style="height: 40px; padding: 0 14px; border-radius: 10px; background: #232328; border: 1px solid #2E2E34; font-size: 12.5px; font-weight: 500; color: #C9C9CE; display: flex; align-items: center;">Replace</button>
+                <button onClick="{{detach}}" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #8C8C93;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V5.2A1.2 1.2 0 0 1 10.7 4h2.6a1.2 1.2 0 0 1 1.2 1.2V7"></path><path d="M6.6 7 7.4 19a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4L17.4 7"></path></svg>
+                </button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{isText}}" hint-placeholder-val="{{true}}">
+          <div>
+            <div style="{{sectionLabelStyle}}">Pick</div>
+            <input type="text" placeholder="Headline, e.g. Staff Play · NBA Prop" style="width: 100%; height: 50px; margin-top: 11px; padding: 0 15px; background: #17171A; border: 1.5px solid #2A2A2E; border-radius: 12px; color: #EDEDEC; font-size: 14px;">
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+              <sc-for list="{{legs}}" as="leg" hint-placeholder-count="2">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="width: 26px; flex-shrink: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #55555C;">{{leg.n}}</span>
+                  <input type="text" placeholder="Selection, e.g. Anthony Edwards Over 26.5 PTS" style="flex-grow: 1; height: 50px; padding: 0 15px; background: #17171A; border: 1.5px solid #2A2A2E; border-radius: 12px; color: #EDEDEC; font-size: 14px;">
+                  <input type="text" placeholder="Odds" style="width: 104px; flex-shrink: 0; height: 50px; padding: 0 14px; background: #17171A; border: 1.5px solid #2A2A2E; border-radius: 12px; color: #EDEDEC; font-size: 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace;">
+                  <input type="text" placeholder="Units" style="width: 88px; flex-shrink: 0; height: 50px; padding: 0 14px; background: #17171A; border: 1.5px solid #2A2A2E; border-radius: 12px; color: #EDEDEC; font-size: 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace;">
+                  <button onClick="{{leg.remove}}" style="{{leg.removeStyle}}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 12h12"></path></svg>
+                  </button>
+                </div>
+              </sc-for>
+            </div>
+
+            <button onClick="{{addLeg}}" style="display: flex; align-items: center; gap: 8px; height: 44px; margin-top: 12px; padding: 0 15px; border-radius: 11px; background: #17171A; border: 1px dashed #34343A; font-size: 13px; font-weight: 500; color: #9C9CA3;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 6v12M6 12h12"></path></svg>
+              Add another leg
+            </button>
+          </div>
+        </sc-if>
+
+        <div>
+          <div style="{{sectionLabelStyle}}">Caption</div>
+          <textarea placeholder="Why you like it. This is the text members read above the pick." style="width: 100%; height: 104px; margin-top: 11px; padding: 14px 15px; background: #17171A; border: 1.5px solid #2A2A2E; border-radius: 12px; color: #EDEDEC; font-size: 14px; line-height: 1.55; resize: none;"></textarea>
+        </div>
+
+        <div>
+          <div style="{{sectionLabelStyle}}">League</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 7px; margin-top: 11px;">
+            <sc-for list="{{leagues}}" as="lg" hint-placeholder-count="5">
+              <button onClick="{{lg.pick}}" style="{{lg.style}}">{{lg.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div>
+          <div style="{{sectionLabelStyle}}">Who can see it</div>
+          <div style="display: flex; gap: 9px; margin-top: 11px;">
+            <sc-for list="{{audiences}}" as="a" hint-placeholder-count="2">
+              <button onClick="{{a.pick}}" style="{{a.style}}">
+                <span style="font-size: 13px; font-weight: 600;">{{a.label}}</span>
+                <span style="font-size: 11.5px; font-weight: 500; opacity: 0.7;">{{a.sub}}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 14px; padding: 15px 17px; background: #17171A; border: 1px solid #2A2A2E; border-radius: 14px;">
+          <button onClick="{{togglePin}}" style="display: flex; align-items: center; gap: 12px; flex-grow: 1;">
+            <span style="{{pinTrackStyle}}"><span style="{{pinKnobStyle}}"></span></span>
+            <span style="display: flex; flex-direction: column; gap: 3px;">
+              <span style="font-size: 13.5px; font-weight: 500;">Pin to top of feed</span>
+              <span style="font-size: 11.5px; color: #6E6E75;">Stays first for 6 hours after publishing</span>
+            </span>
+          </button>
+          <span style="width: 1px; height: 38px; background: #26262B;"></span>
+          <button onClick="{{toggleSchedule}}" style="display: flex; align-items: center; gap: 12px; flex-grow: 1;">
+            <span style="{{schedTrackStyle}}"><span style="{{schedKnobStyle}}"></span></span>
+            <span style="display: flex; flex-direction: column; gap: 3px;">
+              <span style="font-size: 13.5px; font-weight: 500;">{{schedTitle}}</span>
+              <span style="font-size: 11.5px; color: #6E6E75;">{{schedSub}}</span>
+            </span>
+          </button>
+        </div>
+
+      </div>
+
+      <div style="width: 404px; flex-shrink: 0;">
+        <div style="{{sectionLabelStyle}}">Live preview</div>
+        <div style="margin-top: 11px; padding: 20px; border-radius: 22px; background: #17171A; border: 1px solid #26262B;">
+          <div style="border-radius: 16px; background: #121214; border: 1px solid #232327; padding: 14px;">
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="padding: 3px 8px; border-radius: 6px; background: #232328; color: #9C9CA3; font-size: 10px; font-weight: 600; letter-spacing: 0.07em;">{{previewLeague}}</span>
+              <span style="{{previewKindStyle}}">{{previewKind}}</span>
+              <div style="flex-grow: 1;"></div>
+              <span style="font-size: 11.5px; color: #6E6E75;">{{previewTime}}</span>
+            </div>
+
+            <div style="margin-top: 11px; font-size: 13.5px; line-height: 1.5; color: #B6B6BC; text-wrap: pretty;">{{previewCaption}}</div>
+
+            <sc-if value="{{isImage}}" hint-placeholder-val="{{true}}">
+              <div style="margin-top: 13px; border-radius: 12px; overflow: hidden; border: 1px solid #3A3A41; background: #FFFFFF;">
+                <div style="background: #16C264; padding: 11px 13px; display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 12.5px; font-weight: 600; color: #05341A;">Pick Submitted</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#05341A" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                </div>
+                <div style="padding: 13px;">
+                  <div style="font-size: 12px; font-weight: 600; color: #101B2B;">WSH Nationals vs SD Padres</div>
+                  <div style="font-size: 10.5px; color: #7C8697; margin-top: 2px;">Today 5:10 PM</div>
+                  <div style="display: flex; gap: 9px; align-items: flex-start; margin-top: 9px; padding-left: 11px; border-left: 2px solid #E4E8EF;">
+                    <span style="width: 11px; height: 11px; border-radius: 999px; border: 1.6px solid #9BA5B4; margin-top: 2px; flex-shrink: 0;"></span>
+                    <div>
+                      <div style="font-size: 12px; font-weight: 600; color: #101B2B;">Fernando Tatis Jr. Over 0.5</div>
+                      <div style="font-size: 9px; letter-spacing: 0.07em; color: #8B94A4; text-transform: uppercase; font-weight: 500; margin-top: 2px;">Batter home runs</div>
+                    </div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #E9EDF3; padding-top: 11px; margin-top: 13px;">
+                    <span style="font-size: 12.5px; font-weight: 600; color: #101B2B;">2 Leg Parlay</span>
+                    <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 14px; font-weight: 500; color: #101B2B;">+1560</span>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{isText}}" hint-placeholder-val="{{true}}">
+              <div style="margin-top: 13px; background: #1A1A1D; border: 1px solid #2E2E35; border-radius: 12px; padding: 14px;">
+                <div style="{{previewTitleStyle}}">Staff Play  ·  NBA Prop</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 11px;">
+                  <div style="display: flex; flex-direction: column; gap: 3px;">
+                    <span style="font-size: 13.5px; font-weight: 500; color: #EDEDEC;">Anthony Edwards Over 26.5 PTS</span>
+                    <span style="font-size: 11px; color: #6E6E75;">2 units  ·  MIN vs OKC</span>
+                  </div>
+                  <span style="{{previewOddsStyle}}">-110</span>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="display: flex; align-items: center; gap: 7px; padding-top: 13px; margin-top: 13px; border-top: 1px solid #232327;">
+              <span style="display: flex; align-items: center; gap: 6px; height: 34px; color: #8C8C93; font-size: 12.5px; font-weight: 500;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M20.7 8.7c0 4.7-8.7 9.6-8.7 9.6S3.3 13.4 3.3 8.7A4.6 4.6 0 0 1 12 6.8a4.6 4.6 0 0 1 8.7 1.9Z"></path></svg>0
+              </span>
+              <span style="display: flex; align-items: center; gap: 6px; height: 34px; color: #8C8C93; font-size: 12.5px; font-weight: 500;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M20.2 11.6a7.6 7.6 0 0 1-11.1 6.8L4 19.8l1.5-4.9a7.6 7.6 0 1 1 14.7-3.3Z"></path></svg>0
+              </span>
+              <span style="display: flex; align-items: center; gap: 5px; height: 34px; color: #5B5B62; font-size: 12px; font-weight: 500;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 19v-4.5"></path><path d="M11 19V9"></path><path d="M17 19V4.5"></path></svg>0 views
+              </span>
+              <span style="flex-grow: 1;"></span>
+              <span style="{{previewTailStyle}}">Tail  0</span>
+            </div>
+
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; padding: 13px 15px; border-radius: 12px; background: #17171A; border: 1px solid #26262B;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E6E75" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 11v5.5"></path><path d="M12 7.8v.4"></path></svg>
+          <span style="font-size: 11.5px; line-height: 1.55; color: #6E6E75; text-wrap: pretty;">{{audienceNote}}</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#F8D117","options":["#F8D117","#EDEDEC","#3FBF7F","#7C6BF5"],"section":"Brand"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  state = {
+    mode: 'image',
+    attached: true,
+    league: 'MLB',
+    audience: 'all',
+    pinned: false,
+    scheduled: false,
+    legCount: 2
+  };
+
+  accent() { return this.props.accent || '#F8D117'; }
+
+  track(on) {
+    return 'width: 44px; height: 26px; flex-shrink: 0; border-radius: 999px; display: flex; align-items: center; padding: 3px; '
+      + (on ? 'background: ' + this.accent() + '; justify-content: flex-end;' : 'background: #33333A; justify-content: flex-start;');
+  }
+  knob() { return 'width: 20px; height: 20px; border-radius: 999px; background: #FFFFFF;'; }
+
+  typeCard(on) {
+    var base = 'flex-grow: 1; display: flex; align-items: center; gap: 13px; padding: 16px 17px; border-radius: 14px;';
+    if (on) return base + ' background: rgba(248, 209, 23, 0.07); border: 1.5px solid ' + this.accent() + '; color: ' + this.accent() + ';';
+    return base + ' background: #17171A; border: 1.5px solid #26262B; color: #9C9CA3;';
+  }
+
+  chip(on) {
+    var base = 'display: inline-flex; align-items: center; height: 40px; padding: 0 15px; border-radius: 999px; font-size: 12.5px; font-weight: 500;';
+    if (on) return base + ' background: ' + this.accent() + '; color: #17170C; border: 1px solid ' + this.accent() + ';';
+    return base + ' background: #17171A; color: #9C9CA3; border: 1px solid #2A2A2E;';
+  }
+
+  renderVals() {
+    var self = this;
+    var S = this.state;
+    var accent = this.accent();
+    var isImage = S.mode === 'image';
+
+    var navItems = [
+      { label: 'Dashboard',     icon: 'M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-16v4h6V4h-6Z', badge: '',    on: false },
+      { label: 'Posts',         icon: 'M5 5h14v14H5zM8 9h8M8 13h8M8 17h5',                             badge: '',    on: true },
+      { label: 'Members',       icon: 'M9 11a3.4 3.4 0 1 0 0-6.8A3.4 3.4 0 0 0 9 11Zm-6 8.5a6 6 0 0 1 12 0M16 11.4a3 3 0 0 0 0-5.9M21 19.5a5.5 5.5 0 0 0-4-5', badge: '2.1k', on: false },
+      { label: 'Subscriptions', icon: 'M3 8.5h18M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Zm4 8h4', badge: '9',   on: false },
+      { label: 'Comments',      icon: 'M20.2 11.6a7.6 7.6 0 0 1-11.1 6.8L4 19.8l1.5-4.9a7.6 7.6 0 1 1 14.7-3.3Z',                 badge: '14',  on: false },
+      { label: 'Settings',      icon: 'M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Zm7.5-3.2a7.5 7.5 0 0 1-.1 1.2l2 1.6-2 3.4-2.4-1a7.5 7.5 0 0 1-2 1.2l-.4 2.6h-4l-.4-2.6a7.5 7.5 0 0 1-2-1.2l-2.4 1-2-3.4 2-1.6a7.5 7.5 0 0 1 0-2.4l-2-1.6 2-3.4 2.4 1a7.5 7.5 0 0 1 2-1.2L10.6 3h4l.4 2.6a7.5 7.5 0 0 1 2 1.2l2.4-1 2 3.4-2 1.6c.1.4.1.8.1 1.2Z', badge: '', on: false }
+    ];
+
+    var nav = navItems.map(function (n) {
+      return {
+        label: n.label, icon: n.icon, badge: n.badge,
+        style: 'display: flex; align-items: center; gap: 11px; height: 44px; padding: 0 12px; border-radius: 10px; font-size: 13.5px; font-weight: 500; '
+          + (n.on ? 'background: #1E1E22; color: ' + accent + ';' : 'color: #8C8C93;'),
+        badgeStyle: n.badge
+          ? 'font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10.5px; font-weight: 500; color: #6E6E75; background: #232328; padding: 3px 7px; border-radius: 6px;'
+          : 'display: none;'
+      };
+    });
+
+    var leagues = ['MLB', 'NBA', 'NFL', 'NHL', 'Tennis', 'Soccer', 'UFC'].map(function (label) {
+      return { label: label, style: self.chip(label === S.league), pick: function () { self.setState({ league: label }); } };
+    });
+
+    var audienceDefs = [
+      { id: 'all',   label: 'All members',  sub: 'Anyone with an active plan' },
+      { id: 'month', label: '1 month plus', sub: 'Longer plans only' }
+    ];
+    var audiences = audienceDefs.map(function (a) {
+      var on = a.id === S.audience;
+      return {
+        label: a.label, sub: a.sub,
+        style: 'flex-grow: 1; display: flex; flex-direction: column; gap: 4px; padding: 13px 15px; border-radius: 12px; '
+          + (on ? 'background: rgba(248, 209, 23, 0.07); border: 1.5px solid ' + accent + '; color: ' + accent + ';'
+                : 'background: #17171A; border: 1.5px solid #26262B; color: #9C9CA3;'),
+        pick: function () { self.setState({ audience: a.id }); }
+      };
+    });
+    var audienceCopy = {
+      all:   'Every member on an active plan sees this the moment it publishes. Sharing outside the app is disabled, so screenshots are the only way it leaves the feed.',
+      month: 'Only members on a one month plan or longer see this post. Shorter plans see a locked placeholder with an upgrade prompt.'
+    };
+
+    var legs = [];
+    for (var i = 0; i < S.legCount; i++) {
+      legs.push({
+        n: (i + 1) + '.',
+        removeStyle: 'width: 44px; height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 11px; color: '
+          + (S.legCount > 1 ? '#8C8C93;' : '#33333A;'),
+        remove: function () { if (self.state.legCount > 1) { self.setState({ legCount: self.state.legCount - 1 }); } }
+      });
+    }
+
+    return {
+      accent: accent,
+      markStyle: 'width: 28px; height: 28px; flex-shrink: 0; border-radius: 9px; background: ' + accent + '; display: flex; align-items: center; justify-content: center;',
+      wordmarkStyle: 'flex-grow: 1; font-size: 16px; font-weight: 700; letter-spacing: -0.05em; color: ' + accent + ';',
+      sectionLabelStyle: 'font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #55555C;',
+      nav: nav,
+
+      isImage: isImage,
+      isText: !isImage,
+      imageTypeStyle: this.typeCard(isImage),
+      textTypeStyle: this.typeCard(!isImage),
+      pickImage: function () { self.setState({ mode: 'image' }); },
+      pickText: function () { self.setState({ mode: 'text' }); },
+
+      hasFile: isImage && S.attached,
+      noFile: isImage && !S.attached,
+      attach: function () { self.setState({ attached: true }); },
+      detach: function () { self.setState({ attached: false }); },
+
+      legs: legs,
+      addLeg: function () { self.setState({ legCount: self.state.legCount + 1 }); },
+
+      leagues: leagues,
+      audiences: audiences,
+      audienceNote: audienceCopy[S.audience],
+
+      pinTrackStyle: this.track(S.pinned),
+      pinKnobStyle: this.knob(),
+      togglePin: function () { self.setState({ pinned: !S.pinned }); },
+      schedTrackStyle: this.track(S.scheduled),
+      schedKnobStyle: this.knob(),
+      toggleSchedule: function () { self.setState({ scheduled: !S.scheduled }); },
+      schedTitle: S.scheduled ? 'Scheduled for later' : 'Publish immediately',
+      schedSub: S.scheduled ? 'Sep 7, 2026 at 4:45 PM ET' : 'Goes live as soon as you hit publish',
+
+      draftNote: 'Draft saved 12 seconds ago  ·  ' + (isImage ? 'Betting slip image' : 'Text pick') + '  ·  ' + S.league,
+      publishLabel: S.scheduled ? 'Schedule post' : 'Publish now',
+      publishStyle: 'height: 44px; padding: 0 22px; border-radius: 11px; background: ' + accent + '; color: #17170C; font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em; display: flex; align-items: center;',
+
+      previewKind: isImage ? 'Slip' : 'Pick',
+      previewKindStyle: 'padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; letter-spacing: 0.07em; '
+        + (isImage ? 'background: rgba(248, 209, 23, 0.13); color: ' + accent + ';' : 'background: #232328; color: #9C9CA3;'),
+      previewTime: S.scheduled ? 'scheduled 4:45 PM' : 'just now',
+      previewLeague: S.league.toUpperCase(),
+      previewCaption: isImage
+        ? 'Two-leg homer parlay for tonight. Tatis has gone deep in 3 of his last 5 at Petco.'
+        : 'Staff play of the night. Line opened at 27.5 and we are getting a full point of value.',
+      previewTitleStyle: 'font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; color: ' + accent + ';',
+      previewOddsStyle: "font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13.5px; font-weight: 500; color: " + accent + ';',
+      previewTailStyle: 'display: flex; align-items: center; height: 34px; padding: 0 14px; border-radius: 11px; font-size: 12.5px; font-weight: 600; color: ' + accent + '; border: 1px solid #45401F;'
+    };
+  }
+}
+</script>
+</body>
+</html>

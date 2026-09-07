@@ -1,0 +1,267 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #121214; font-family: Manrope, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #F8D117; text-decoration: none; }
+    a:hover { color: #FFE45C; }
+    .dd-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+    .dd-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    button { font-family: inherit; cursor: pointer; border: 0; background: none; padding: 0; color: inherit; text-align: left; }
+  </style>
+</helmet>
+
+<div style="width: 390px; height: 844px; background: #121214; color: #EDEDEC; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 22px 18px 10px 18px; flex-shrink: 0;">
+    <span style="font-size: 19px; font-weight: 700; letter-spacing: -0.03em;">Profile</span>
+    <button style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #9C9CA3;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.2 14.6a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7h-.3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1v-.3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.8 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4.9Z"></path></svg>
+    </button>
+  </div>
+
+  <div class="dd-scroll" style="flex-grow: 1; overflow-y: auto; padding: 6px 18px 20px 18px;">
+
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <div style="{{avatarStyle}}">JM</div>
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
+        <span style="font-size: 17px; font-weight: 600; letter-spacing: -0.02em;">Jordan Mills</span>
+        <span style="font-size: 12.5px; color: #6E6E75;">@jmills &nbsp;·&nbsp; Member since Mar 2026</span>
+      </div>
+      <button style="height: 40px; padding: 0 15px; border-radius: 11px; background: #1E1E22; border: 1px solid #2A2A2E; font-size: 12.5px; font-weight: 500; color: #C9C9CE;">Edit</button>
+    </div>
+
+    <div style="display: flex; gap: 9px; margin-top: 18px;">
+      <div style="flex-grow: 1; padding: 13px; background: #1A1A1D; border: 1px solid #2A2A2E; border-radius: 13px;">
+        <div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 19px; font-weight: 500; color: #EDEDEC;">37</div>
+        <div style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #6E6E75; margin-top: 4px;">Tails</div>
+      </div>
+      <div style="flex-grow: 1; padding: 13px; background: #1A1A1D; border: 1px solid #2A2A2E; border-radius: 13px;">
+        <div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 19px; font-weight: 500; color: #EDEDEC;">84</div>
+        <div style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #6E6E75; margin-top: 4px;">Comments</div>
+      </div>
+      <div style="flex-grow: 1; padding: 13px; background: #1A1A1D; border: 1px solid #2A2A2E; border-radius: 13px;">
+        <div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 19px; font-weight: 500; color: #EDEDEC;">6 mo</div>
+        <div style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #6E6E75; margin-top: 4px;">Member</div>
+      </div>
+    </div>
+
+    <div style="{{subCardStyle}}">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div>
+          <div style="{{eyebrowStyle}}">Active membership</div>
+          <div style="font-size: 17px; font-weight: 700; letter-spacing: -0.025em; margin-top: 7px;">1 month access</div>
+          <div style="font-size: 12px; color: #8C8C93; margin-top: 5px;">Renews Oct 7, 2026 &nbsp;·&nbsp; $149.50 + $1.13 fee</div>
+        </div>
+        <span style="display: flex; align-items: center; gap: 6px; height: 27px; padding: 0 10px; border-radius: 999px; background: rgba(63, 191, 127, 0.13); font-size: 10.5px; font-weight: 600; color: #3FBF7F;">
+          <span style="width: 6px; height: 6px; border-radius: 999px; background: #3FBF7F;"></span>Active
+        </span>
+      </div>
+      <div style="margin-top: 15px;">
+        <div style="height: 5px; border-radius: 999px; background: #2A2A2E; overflow: hidden;">
+          <div style="{{progressStyle}}"></div>
+        </div>
+        <div style="font-size: 11px; color: #6E6E75; margin-top: 8px;">22 of 30 days remaining</div>
+      </div>
+      <div style="display: flex; gap: 9px; margin-top: 15px;">
+        <button style="{{changePlanStyle}}">Change plan</button>
+        <button style="flex-grow: 1; height: 46px; border-radius: 12px; background: #232328; border: 1px solid #2E2E34; font-size: 13px; font-weight: 500; color: #9C9CA3; display: flex; align-items: center; justify-content: center;">Cancel</button>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 4px; margin-top: 22px; padding: 4px; background: #1A1A1D; border: 1px solid #26262B; border-radius: 13px;">
+      <button onClick="{{pickTails}}" style="{{tailsTabStyle}}">My Tails</button>
+      <button onClick="{{pickAccount}}" style="{{accountTabStyle}}">Account</button>
+    </div>
+
+    <sc-if value="{{onTails}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
+        <sc-for list="{{tails}}" as="t" hint-placeholder-count="4">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 14px; background: #1A1A1D; border: 1px solid #2A2A2E; border-radius: 13px;">
+            <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 5px;">
+              <div style="display: flex; align-items: center; gap: 7px;">
+                <span style="padding: 2px 7px; border-radius: 5px; background: #26262B; color: #9C9CA3; font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em;">{{t.league}}</span>
+                <span style="{{t.kindStyle}}">{{t.kind}}</span>
+              </div>
+              <span style="font-size: 13.5px; font-weight: 500; letter-spacing: -0.01em; color: #EDEDEC;">{{t.pick}}</span>
+              <span style="font-size: 11px; color: #6E6E75;">{{t.meta}}</span>
+            </div>
+            <span style="{{t.oddsStyle}}">{{t.odds}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{onAccount}}" hint-placeholder-val="{{true}}">
+      <div style="margin-top: 16px;">
+
+        <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #55555C; padding: 0 2px 10px 2px;">Sign in</div>
+        <div style="background: #1A1A1D; border: 1px solid #2A2A2E; border-radius: 13px; overflow: hidden;">
+          <button style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 58px; padding: 12px 15px;">
+            <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px;">
+              <span style="font-size: 11.5px; color: #6E6E75;">Email address</span>
+              <span style="font-size: 13.5px; font-weight: 500; color: #EDEDEC;">jordan.mills@example.com</span>
+            </span>
+            <span style="font-size: 12.5px; font-weight: 500; color: {{accent}};">Change</span>
+          </button>
+          <div style="height: 1px; background: #26262B; margin-left: 15px;"></div>
+          <button style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 58px; padding: 12px 15px;">
+            <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px;">
+              <span style="font-size: 11.5px; color: #6E6E75;">Password</span>
+              <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13.5px; color: #EDEDEC;">••••••••••</span>
+            </span>
+            <span style="font-size: 12.5px; font-weight: 500; color: {{accent}};">Change</span>
+          </button>
+        </div>
+
+        <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #55555C; padding: 22px 2px 10px 2px;">Billing</div>
+        <div style="background: #1A1A1D; border: 1px solid #2A2A2E; border-radius: 13px; overflow: hidden;">
+          <button style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 58px; padding: 12px 15px;">
+            <span style="width: 32px; height: 21px; flex-shrink: 0; border-radius: 4px; background: #EDEDEC; display: flex; align-items: center; justify-content: center;">
+              <span style="width: 10px; height: 10px; border-radius: 999px; background: #E8562F;"></span>
+              <span style="width: 10px; height: 10px; border-radius: 999px; background: #F0A020; margin-left: -4px;"></span>
+            </span>
+            <span style="flex-grow: 1; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13.5px; color: #EDEDEC;">•••• 2420</span>
+            <span style="font-size: 12.5px; font-weight: 500; color: {{accent}};">Change</span>
+          </button>
+          <div style="height: 1px; background: #26262B; margin-left: 15px;"></div>
+          <button style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 58px; padding: 12px 15px;">
+            <span style="flex-grow: 1; font-size: 13.5px; font-weight: 500; color: #EDEDEC;">Billing history</span>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#55555C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5 7 7-7 7"></path></svg>
+          </button>
+        </div>
+
+        <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #55555C; padding: 22px 2px 10px 2px;">Preferences</div>
+        <div style="background: #1A1A1D; border: 1px solid #2A2A2E; border-radius: 13px; overflow: hidden;">
+          <button onClick="{{toggleAlerts}}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 58px; padding: 12px 15px;">
+            <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px;">
+              <span style="font-size: 13.5px; font-weight: 500; color: #EDEDEC;">New pick alerts</span>
+              <span style="font-size: 11.5px; color: #6E6E75;">Push me the moment a new pick posts</span>
+            </span>
+            <span style="{{alertTrackStyle}}"><span style="{{alertKnobStyle}}"></span></span>
+          </button>
+          <div style="height: 1px; background: #26262B; margin-left: 15px;"></div>
+          <button onClick="{{toggleResults}}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 58px; padding: 12px 15px;">
+            <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px;">
+              <span style="font-size: 13.5px; font-weight: 500; color: #EDEDEC;">Start time reminders</span>
+              <span style="font-size: 11.5px; color: #6E6E75;">Nudge me before first pitch on picks I tailed</span>
+            </span>
+            <span style="{{resultTrackStyle}}"><span style="{{resultKnobStyle}}"></span></span>
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 22px;">
+          <button style="display: flex; align-items: center; justify-content: center; width: 100%; height: 50px; border-radius: 12px; background: #1A1A1D; border: 1px solid #2A2A2E; font-size: 13.5px; font-weight: 500; color: #C9C9CE;">Log out</button>
+          <button style="display: flex; align-items: center; justify-content: center; width: 100%; height: 50px; border-radius: 12px; font-size: 13px; font-weight: 500; color: #D6564F;">Delete account</button>
+        </div>
+
+      </div>
+    </sc-if>
+
+  </div>
+
+  <div style="flex-shrink: 0; display: flex; align-items: flex-start; justify-content: space-around; height: 76px; padding: 10px 8px 0 8px; background: #151517; border-top: 1px solid #232327;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; width: 68px; height: 52px; justify-content: center; color: #5E5E66;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7.5" rx="2.4"></rect><rect x="3" y="14" width="18" height="6" rx="2.2"></rect></svg>
+      <span style="font-size: 10px; font-weight: 500;">Feed</span>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; width: 68px; height: 52px; justify-content: center; color: #5E5E66;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+      <span style="font-size: 10px; font-weight: 500;">Search</span>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; width: 68px; height: 52px; justify-content: center; color: #5E5E66;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M6 4.9A1.9 1.9 0 0 1 7.9 3h8.2A1.9 1.9 0 0 1 18 4.9V21l-6-3.8L6 21V4.9Z"></path></svg>
+      <span style="font-size: 10px; font-weight: 500;">My Tails</span>
+    </div>
+    <div style="{{navActiveStyle}}">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8.4" r="3.7"></circle><path d="M4.9 20a7.6 7.6 0 0 1 14.2 0"></path></svg>
+      <span style="font-size: 10px; font-weight: 600;">Profile</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#F8D117","options":["#F8D117","#EDEDEC","#3FBF7F","#7C6BF5"],"section":"Brand"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { tab: 'tails', alerts: true, results: true };
+
+  accent() { return this.props.accent || '#F8D117'; }
+
+  tabStyle(on) {
+    var base = 'flex-grow: 1; display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 10px; font-size: 13.5px; font-weight: 600; letter-spacing: -0.01em;';
+    if (on) return base + ' background: ' + this.accent() + '; color: #17170C;';
+    return base + ' background: transparent; color: #8C8C93;';
+  }
+
+  track(on) {
+    return 'width: 46px; height: 27px; flex-shrink: 0; border-radius: 999px; display: flex; align-items: center; padding: 3px; '
+      + (on ? 'background: ' + this.accent() + '; justify-content: flex-end;' : 'background: #33333A; justify-content: flex-start;');
+  }
+
+  knob() { return 'width: 21px; height: 21px; border-radius: 999px; background: #FFFFFF;'; }
+
+  tailData() {
+    return [
+      { league: 'NBA',    kind: 'Text', pick: 'Anthony Edwards Over 26.5 PTS', meta: 'Sep 5  ·  2 units', odds: '-110' },
+      { league: 'MLB',    kind: 'Slip', pick: 'Tatis + PCA home run parlay',   meta: 'today, 5:10 PM',    odds: '+1560' },
+      { league: 'NFL',    kind: 'Slip', pick: 'Packers -3.5 alt spread',       meta: 'Sep 4  ·  1 unit',  odds: '+165' },
+      { league: 'TENNIS', kind: 'Text', pick: 'Alexander Blockx ML',           meta: 'Sep 3  ·  1 unit',  odds: '-135' },
+      { league: 'MLB',    kind: 'Text', pick: 'COL vs ARI Over 10.5',          meta: 'Sep 2  ·  1 unit',  odds: '+105' }
+    ];
+  }
+
+  renderVals() {
+    var self = this;
+    var S = this.state;
+    var accent = this.accent();
+    var onTails = S.tab === 'tails';
+
+    var tails = this.tailData().map(function (t) {
+      return {
+        league: t.league, kind: t.kind, pick: t.pick, meta: t.meta, odds: t.odds,
+        kindStyle: 'padding: 2px 7px; border-radius: 5px; font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em; '
+          + (t.kind === 'Slip' ? 'background: rgba(248, 209, 23, 0.13); color: ' + accent + ';' : 'background: #26262B; color: #9C9CA3;'),
+        oddsStyle: "font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: " + accent + ';'
+      };
+    });
+
+    return {
+      accent: accent,
+      avatarStyle: 'width: 58px; height: 58px; flex-shrink: 0; border-radius: 18px; background: #2A2436; border: 1px solid #3A3A41; display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 700; color: ' + accent + ';',
+      eyebrowStyle: 'font-size: 9.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: ' + accent + ';',
+      subCardStyle: 'margin-top: 18px; padding: 17px; border-radius: 16px; background: rgba(248, 209, 23, 0.055); border: 1.5px solid ' + accent + ';',
+      progressStyle: 'width: 73%; height: 100%; border-radius: 999px; background: ' + accent + ';',
+      changePlanStyle: 'flex-grow: 1; height: 46px; border-radius: 12px; background: ' + accent + '; color: #17170C; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center;',
+
+      onTails: onTails,
+      onAccount: !onTails,
+      tailsTabStyle: this.tabStyle(onTails),
+      accountTabStyle: this.tabStyle(!onTails),
+      pickTails: function () { self.setState({ tab: 'tails' }); },
+      pickAccount: function () { self.setState({ tab: 'account' }); },
+
+      tails: tails,
+
+      alertTrackStyle: this.track(S.alerts),
+      alertKnobStyle: this.knob(),
+      toggleAlerts: function () { self.setState({ alerts: !S.alerts }); },
+      resultTrackStyle: this.track(S.results),
+      resultKnobStyle: this.knob(),
+      toggleResults: function () { self.setState({ results: !S.results }); },
+
+      navActiveStyle: 'display: flex; flex-direction: column; align-items: center; gap: 5px; width: 68px; height: 52px; justify-content: center; color: ' + accent + ';'
+    };
+  }
+}
+</script>
+</body>
+</html>
