@@ -47,3 +47,6 @@ next-env.d.ts
 .env.production
 *.pem
 supabase/.temp/
+
+.vercel
+.env*

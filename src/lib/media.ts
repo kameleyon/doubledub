@@ -94,3 +94,65 @@ export function buildStoragePath(postId: string, extension: 'png' | 'jpg' | 'web
   const nonce = crypto.randomUUID().slice(0, 8);
   return `posts/${postId}/${stamp}-${nonce}.${extension}`;
 }
+
+/**
+ * Batch variant for the feed.
+ *
+ * Signing each post separately would spend one rate-limit token per card and
+ * fire N round-trips to build one screen. This takes a single token, resolves
+ * visibility for the whole set in one query, and signs in parallel.
+ *
+ * Entitlement is still enforced: `post_media` rows are fetched with the
+ * SESSION-scoped client, so row level security drops anything the caller may
+ * not read before a URL is ever minted.
+ */
+export async function signMediaForPosts(
+  postIds: string[],
+): Promise<Map<string, SignedMedia[]>> {
+  const out = new Map<string, SignedMedia[]>();
+  if (postIds.length === 0) return out;
+
+  const { user } = await requireEntitled();
+  await enforceRateLimit('media', user.id);
+
+  const { createClient } = await import('@/lib/supabase/server');
+  const scoped = await createClient();
+
+  const { data: media, error } = await scoped
+    .from('post_media')
+    .select('id, post_id, storage_path, width, height')
+    .in('post_id', postIds);
+
+  if (error || !media?.length) return out;
+
+  const admin = createAdminClient();
+  const expiresAt = new Date(Date.now() + SIGNED_URL_TTL_SECONDS * 1000).toISOString();
+
+  const usable = media.filter((row) => {
+    const ok = SAFE_PATH.test(row.storage_path);
+    if (!ok) console.error('[media] refusing to sign suspicious path', row.storage_path);
+    return ok;
+  });
+
+  const signed = await Promise.all(
+    usable.map(async (row) => {
+      const { data, error: signErr } = await admin.storage
+        .from(BUCKET)
+        .createSignedUrl(row.storage_path, SIGNED_URL_TTL_SECONDS);
+      if (signErr || !data) return null;
+      return {
+        postId: row.post_id,
+        media: { id: row.id, url: data.signedUrl, width: row.width, height: row.height, expiresAt },
+      };
+    }),
+  );
+
+  for (const entry of signed) {
+    if (!entry) continue;
+    const list = out.get(entry.postId) ?? [];
+    list.push(entry.media);
+    out.set(entry.postId, list);
+  }
+
+  return out;
+}

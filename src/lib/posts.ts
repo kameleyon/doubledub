@@ -1,0 +1,80 @@
+import 'server-only';
+import { createClient } from '@/lib/supabase/server';
+import { requireEntitled } from '@/lib/auth';
+import { signMediaForPosts } from '@/lib/media';
+import { FEED_PAGE_SIZE, type FeedPost } from '@/lib/feed';
+
+export type { FeedPost, FeedLeg, FeedMedia } from '@/lib/feed';
+
+/**
+ * Loads one page of the feed for the signed-in member.
+ *
+ * Every read here goes through the session-scoped client, so row level security
+ * decides what comes back. This function does no authorization of its own — it
+ * cannot accidentally widen access, only narrow it.
+ */
+export async function getFeed(opts: { league?: string; before?: string } = {}): Promise<FeedPost[]> {
+  const { user } = await requireEntitled();
+  const supabase = await createClient();
+
+  let query = supabase
+    .from('posts')
+    .select(
+      `id, kind, league, title, caption, published_at, pinned_until,
+       like_count, tail_count, comment_count, view_count,
+       post_legs ( selection, market, odds, units, position )`,
+    )
+    .order('published_at', { ascending: false })
+    .limit(FEED_PAGE_SIZE);
+
+  if (opts.league && opts.league !== 'All') {
+    query = query.eq('league', opts.league);
+  }
+  // Keyset pagination rather than offset: stable under inserts, and it stays
+  // fast as the feed grows because it rides the published_at index.
+  if (opts.before) {
+    query = query.lt('published_at', opts.before);
+  }
+
+  const { data: rows, error } = await query;
+  if (error || !rows?.length) return [];
+
+  const ids = rows.map((r) => r.id);
+
+  // Fetch engagement state and signed media alongside, not per card.
+  const [likesRes, tailsRes, mediaMap] = await Promise.all([
+    supabase.from('likes').select('post_id').in('post_id', ids).eq('user_id', user.id),
+    supabase.from('tails').select('post_id').in('post_id', ids).eq('user_id', user.id),
+    signMediaForPosts(ids.filter((_, i) => rows[i].kind === 'slip')),
+  ]);
+
+  const liked = new Set((likesRes.data ?? []).map((r) => r.post_id));
+  const tailed = new Set((tailsRes.data ?? []).map((r) => r.post_id));
+  const now = Date.now();
+
+  return rows.map((r) => ({
+    id: r.id,
+    kind: r.kind,
+    league: r.league,
+    title: r.title,
+    caption: r.caption,
+    publishedAt: r.published_at ?? '',
+    pinned: r.pinned_until ? new Date(r.pinned_until).getTime() > now : false,
+    legs: (r.post_legs ?? [])
+      .slice()
+      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+      .map((l) => ({
+        selection: l.selection,
+        market: l.market,
+        odds: l.odds,
+        units: l.units === null ? null : Number(l.units),
+      })),
+    media: mediaMap.get(r.id) ?? [],
+    likeCount: r.like_count,
+    tailCount: r.tail_count,
+    commentCount: r.comment_count,
+    viewCount: r.view_count,
+    liked: liked.has(r.id),
+    tailed: tailed.has(r.id),
+  }));
+}

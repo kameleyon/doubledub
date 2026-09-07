@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3100",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -13,7 +13,10 @@
     "db:types": "\"C:/Users/Administrator/motionmax/node_modules/supabase/bin/supabase.exe\" gen types typescript --linked --schema public > src/lib/database.types.ts",
     "stripe:listen": "stripe listen --forward-to localhost:3000/api/stripe/webhook",
     "verify:rls": "node scripts/verify-rls.mjs",
-    "verify": "npm run typecheck && npm run db:audit && npm run verify:rls"
+    "verify": "npm run typecheck && npm run db:audit && npm run verify:rls",
+    "verify:smoke": "node scripts/smoke-feed.mjs",
+    "seed:posts": "node scripts/seed-demo-posts.mjs",
+    "seed:stripe": "node scripts/seed-stripe-prices.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.6",
