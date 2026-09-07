@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { toggleLike, toggleTail } from '@/lib/actions/engagement';
-import { relativeTime, formatViews, type FeedPost } from '@/lib/feed';
+import { relativeTime, formatViews, BET_TYPE_LABEL, type FeedPost } from '@/lib/feed';
 
 export function PostCard({ post }: { post: FeedPost }) {
   const [liked, setLiked] = useState(post.liked);
@@ -43,7 +43,7 @@ export function PostCard({ post }: { post: FeedPost }) {
     <article className="flex-shrink-0 rounded-[16px] border border-[var(--color-line)] bg-[var(--color-surface)]">
       <header className="flex items-center gap-2 px-[14px] pt-[14px]">
         <span className="rounded-[6px] bg-[var(--color-surface-3)] px-2 py-[3px] text-[10px] font-semibold tracking-[0.07em] text-[var(--color-ink-2)]">
-          {post.league || 'PICK'}
+          {BET_TYPE_LABEL[post.betType] ?? 'Pick'}
         </span>
         <span
           className={`rounded-[6px] px-2 py-[3px] text-[10px] font-semibold tracking-[0.07em] ${

@@ -127,12 +127,17 @@ export default async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Everything except Next's own assets and the Stripe webhook.
+     * Skip Next's internals, the Stripe webhook, and anything that looks like a
+     * static file.
      *
-     * The webhook is excluded deliberately: it is authenticated by signature,
-     * not by session, and running it through the auth redirect above would
-     * bounce Stripe to /sign-in and silently drop payment events.
+     * The extension check is load-bearing: without it, /ddlogo.png was treated
+     * as a protected route and 307'd to /sign-in, which also broke
+     * /_next/image because the optimizer could not fetch its own source.
+     *
+     * The webhook is excluded because it is authenticated by signature, not by
+     * session — running it through the auth redirect would bounce Stripe to
+     * /sign-in and silently drop payment events.
      */
-    '/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|icons/|api/stripe/webhook).*)',
+    '/((?!_next/static|_next/image|api/stripe/webhook|.*\.(?:png|jpg|jpeg|gif|webp|avif|svg|ico|txt|xml|webmanifest|json|woff|woff2|ttf|otf|mp4|webm)$).*)',
   ],
 };

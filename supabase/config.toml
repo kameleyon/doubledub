@@ -1,0 +1,34 @@
+# Remote configuration for the doubledub project.
+# Applied with: supabase config push
+project_id = "irtnpnspjjlacamtudjz"
+
+[auth]
+# Where Supabase sends people when an email link has no explicit redirect.
+# This defaulted to http://localhost:3000, which on this machine is a different
+# app entirely — confirmation links landed on its /login page and dropped the
+# code. It must point at doubledub.
+site_url = "https://doubledub-lightspiritux-8985s-projects.vercel.app"
+
+# Any redirect target we pass as emailRedirectTo must appear here or Supabase
+# silently falls back to site_url.
+additional_redirect_urls = [
+  "https://doubledub-lightspiritux-8985s-projects.vercel.app/auth/callback",
+  "https://doubledub-lightspiritux-8985s-projects.vercel.app/**",
+  "http://localhost:3100/auth/callback",
+  "http://localhost:3100/**",
+]
+
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+enable_signup = true
+enable_anonymous_sign_ins = false
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+double_confirm_changes = true
+secure_password_change = true
+max_frequency = "60s"
+otp_length = 6
+otp_expiry = 3600

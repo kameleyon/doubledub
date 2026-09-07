@@ -2,7 +2,7 @@ import 'server-only';
 import { createClient } from '@/lib/supabase/server';
 import { requireEntitled } from '@/lib/auth';
 import { signMediaForPosts } from '@/lib/media';
-import { FEED_PAGE_SIZE, type FeedPost } from '@/lib/feed';
+import { FEED_PAGE_SIZE, isBetType, rangeCutoff, type FeedPost } from '@/lib/feed';
 
 export type { FeedPost, FeedLeg, FeedMedia } from '@/lib/feed';
 
@@ -13,22 +13,31 @@ export type { FeedPost, FeedLeg, FeedMedia } from '@/lib/feed';
  * decides what comes back. This function does no authorization of its own — it
  * cannot accidentally widen access, only narrow it.
  */
-export async function getFeed(opts: { league?: string; before?: string } = {}): Promise<FeedPost[]> {
+export async function getFeed(
+  opts: { betType?: string; range?: string; before?: string } = {},
+): Promise<FeedPost[]> {
   const { user } = await requireEntitled();
   const supabase = await createClient();
 
   let query = supabase
     .from('posts')
     .select(
-      `id, kind, league, title, caption, published_at, pinned_until,
+      `id, kind, bet_type, title, caption, published_at, pinned_until,
        like_count, tail_count, comment_count, view_count,
        post_legs ( selection, market, odds, units, position )`,
     )
     .order('published_at', { ascending: false })
     .limit(FEED_PAGE_SIZE);
 
-  if (opts.league && opts.league !== 'All') {
-    query = query.eq('league', opts.league);
+  // Validated rather than cast: an unrecognised ?type= value is ignored
+  // instead of being handed to the database.
+  if (isBetType(opts.betType)) {
+    query = query.eq('bet_type', opts.betType);
+  }
+
+  const cutoff = rangeCutoff(opts.range);
+  if (cutoff) {
+    query = query.gte('published_at', cutoff);
   }
   // Keyset pagination rather than offset: stable under inserts, and it stays
   // fast as the feed grows because it rides the published_at index.
@@ -55,7 +64,7 @@ export async function getFeed(opts: { league?: string; before?: string } = {}): 
   return rows.map((r) => ({
     id: r.id,
     kind: r.kind,
-    league: r.league,
+    betType: r.bet_type,
     title: r.title,
     caption: r.caption,
     publishedAt: r.published_at ?? '',

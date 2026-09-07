@@ -260,13 +260,13 @@ export type Database = {
       }
       posts: {
         Row: {
+          bet_type: Database["public"]["Enums"]["bet_type"]
           caption: string
           comment_count: number
           created_at: string
           created_by: string | null
           id: string
           kind: Database["public"]["Enums"]["post_kind"]
-          league: string
           like_count: number
           min_term_days: number
           pinned_until: string | null
@@ -279,13 +279,13 @@ export type Database = {
           view_count: number
         }
         Insert: {
+          bet_type?: Database["public"]["Enums"]["bet_type"]
           caption?: string
           comment_count?: number
           created_at?: string
           created_by?: string | null
           id?: string
           kind: Database["public"]["Enums"]["post_kind"]
-          league?: string
           like_count?: number
           min_term_days?: number
           pinned_until?: string | null
@@ -298,13 +298,13 @@ export type Database = {
           view_count?: number
         }
         Update: {
+          bet_type?: Database["public"]["Enums"]["bet_type"]
           caption?: string
           comment_count?: number
           created_at?: string
           created_by?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["post_kind"]
-          league?: string
           like_count?: number
           min_term_days?: number
           pinned_until?: string | null
@@ -477,6 +477,7 @@ export type Database = {
       record_post_view: { Args: { p_post_id: string }; Returns: number }
     }
     Enums: {
+      bet_type: "single" | "parlay" | "prop" | "total" | "futures" | "live"
       post_kind: "slip" | "text"
       post_status: "draft" | "scheduled" | "published" | "archived"
       subscription_status:
@@ -615,6 +616,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      bet_type: ["single", "parlay", "prop", "total", "futures", "live"],
       post_kind: ["slip", "text"],
       post_status: ["draft", "scheduled", "published", "archived"],
       subscription_status: [

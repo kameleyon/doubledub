@@ -69,7 +69,7 @@ async function main() {
     .insert({
       kind: 'text',
       status: 'published',
-      league: 'MLB',
+      bet_type: 'single',
       title: 'RLS probe',
       caption: 'Temporary fixture created by verify-rls.mjs',
       published_at: new Date().toISOString(),
@@ -84,7 +84,7 @@ async function main() {
     .insert({
       kind: 'text',
       status: 'published',
-      league: 'NBA',
+      bet_type: 'parlay',
       title: 'RLS probe (gated to 1 month plus)',
       published_at: new Date().toISOString(),
       min_term_days: 30,
@@ -94,7 +94,7 @@ async function main() {
 
   const { data: draftPost } = await admin
     .from('posts')
-    .insert({ kind: 'text', status: 'draft', league: 'NFL', title: 'RLS probe (draft)' })
+    .insert({ kind: 'text', status: 'draft', bet_type: 'prop', title: 'RLS probe (draft)' })
     .select('id')
     .single();
 

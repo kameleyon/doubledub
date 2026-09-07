@@ -28,7 +28,7 @@ const minsAgo = (m) => new Date(Date.now() - m * 60000).toISOString();
 const POSTS = [
   {
     kind: 'text',
-    league: 'NBA',
+    bet_type: 'prop',
     title: 'Pick of the night',
     caption:
       'Staff play of the night. Line opened at 27.5 and we are getting a full point of value with Gobert ruled out.',
@@ -37,7 +37,7 @@ const POSTS = [
   },
   {
     kind: 'text',
-    league: 'TENNIS',
+    bet_type: 'single',
     title: 'Tennis play',
     caption:
       'Blockx has won four straight on hard court and the number has not moved all morning. Taking it before it does.',
@@ -46,7 +46,7 @@ const POSTS = [
   },
   {
     kind: 'text',
-    league: 'MLB',
+    bet_type: 'parlay',
     title: 'Two-leg homer parlay',
     caption:
       'Tatis has gone deep in 3 of his last 5 at Petco and PCA sees a lefty with a 1.9 HR/9. Sizing at half a unit given the payout.',
@@ -58,7 +58,7 @@ const POSTS = [
   },
   {
     kind: 'text',
-    league: 'NFL',
+    bet_type: 'parlay',
     title: 'Sunday early window',
     caption: 'Both legs are correlated with the game total staying under.',
     published_at: minsAgo(320),
@@ -69,7 +69,7 @@ const POSTS = [
   },
   {
     kind: 'text',
-    league: 'MLB',
+    bet_type: 'total',
     title: 'Late add',
     caption: 'Bullpen day for Colorado and this total has been climbing since it opened.',
     published_at: minsAgo(460),
@@ -99,7 +99,7 @@ async function main() {
       .insert({
         kind: p.kind,
         status: 'published',
-        league: p.league,
+        bet_type: p.bet_type,
         title: p.title,
         caption: `${p.caption} ${MARKER}`,
         published_at: p.published_at,
@@ -114,7 +114,7 @@ async function main() {
     const { error: legErr } = await admin.from('post_legs').insert(legs);
     if (legErr) throw new Error(`legs for "${p.title}": ${legErr.message}`);
 
-    console.log(`  ${p.league.padEnd(7)} ${p.title}`);
+    console.log(`  ${p.bet_type.padEnd(8)} ${p.title}`);
   }
 
   console.log(`\nseeded ${POSTS.length} published picks.\n`);

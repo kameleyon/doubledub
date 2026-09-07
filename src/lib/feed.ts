@@ -26,7 +26,7 @@ export type FeedLeg = {
 export type FeedPost = {
   id: string;
   kind: 'slip' | 'text';
-  league: string;
+  betType: BetType;
   title: string;
   caption: string;
   publishedAt: string;
@@ -43,7 +43,52 @@ export type FeedPost = {
 
 export const FEED_PAGE_SIZE = 12;
 
-export const LEAGUE_FILTERS = ['All', 'MLB', 'NBA', 'NFL', 'NHL', 'TENNIS', 'SOCCER', 'UFC'] as const;
+export type BetType = 'single' | 'parlay' | 'prop' | 'total' | 'futures' | 'live';
+
+/**
+ * The feed is browsed by TYPE OF BET across every sport — members pick the
+ * kind of play they want, not the sport.
+ */
+export const BET_TYPES: { value: BetType; label: string }[] = [
+  { value: 'single', label: 'Straight' },
+  { value: 'parlay', label: 'Parlay' },
+  { value: 'prop', label: 'Prop' },
+  { value: 'total', label: 'Over / Under' },
+  { value: 'futures', label: 'Futures' },
+  { value: 'live', label: 'Live' },
+];
+
+export const BET_TYPE_LABEL: Record<BetType, string> = Object.fromEntries(
+  BET_TYPES.map((b) => [b.value, b.label]),
+) as Record<BetType, string>;
+
+export type TimeRange = 'today' | '48h' | '7d' | '30d' | 'all';
+
+/** How far back the feed reaches. Members mostly want "what is live now". */
+export const TIME_RANGES: { value: TimeRange; label: string; hours: number | null }[] = [
+  { value: 'today', label: 'Today', hours: 24 },
+  { value: '48h', label: '48 hours', hours: 48 },
+  { value: '7d', label: 'This week', hours: 24 * 7 },
+  { value: '30d', label: 'This month', hours: 24 * 30 },
+  { value: 'all', label: 'All time', hours: null },
+];
+
+export function isTimeRange(value: unknown): value is TimeRange {
+  return typeof value === 'string' && TIME_RANGES.some((t) => t.value === value);
+}
+
+/** Resolves a range to an ISO cutoff, or null for "no lower bound". */
+export function rangeCutoff(value: unknown): string | null {
+  if (!isTimeRange(value) || value === 'all') return null;
+  const hours = TIME_RANGES.find((t) => t.value === value)?.hours;
+  if (!hours) return null;
+  return new Date(Date.now() - hours * 3600_000).toISOString();
+}
+
+/** Narrows an untrusted query-string value to a real bet type. */
+export function isBetType(value: unknown): value is BetType {
+  return typeof value === 'string' && BET_TYPES.some((b) => b.value === value);
+}
 
 /** "7 min ago" / "3 hours ago" / "Sep 4". Feed timestamps read better relative. */
 export function relativeTime(iso: string): string {
@@ -68,8 +113,3 @@ export function formatViews(n: number): string {
   return `${(n / 1000).toFixed(1)}k views`;
 }
 
-export function prettyLeague(league: string): string {
-  if (league === 'TENNIS') return 'Tennis';
-  if (league === 'SOCCER') return 'Soccer';
-  return league;
-}
