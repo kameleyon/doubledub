@@ -52,6 +52,21 @@ body {
     env(safe-area-inset-left);
 }
 
+/* Tailwind v4 dropped the default `cursor: pointer` on buttons, so every
+   control in the app rendered with an arrow and read as non-interactive.
+   Restore it, and make a disabled control say so. */
+button:not(:disabled),
+[role='button']:not([aria-disabled='true']),
+label:has(> input[type='checkbox']),
+summary {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
 /* Members cannot share posts, so make casual copying of slip images awkward.
    This is friction, not protection — a screenshot is always possible. */
 [data-no-copy] {

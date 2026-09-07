@@ -22,6 +22,17 @@ const credentials = z.object({
  */
 const SIGN_IN_FAILED = 'Email or password is incorrect.';
 
+/**
+ * Single entry point for both modes.
+ *
+ * The form carries a `mode` field rather than binding a different action per
+ * tab, so switching tabs is pure local state — no navigation, no round trip,
+ * no dead moment where the button looks broken.
+ */
+export async function authenticate(prev: AuthState, formData: FormData): Promise<AuthState> {
+  return formData.get('mode') === 'signup' ? signUp(prev, formData) : signIn(prev, formData);
+}
+
 export async function signIn(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const parsed = credentials.safeParse({
     email: formData.get('email'),

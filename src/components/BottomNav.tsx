@@ -1,8 +1,10 @@
 import Link from 'next/link';
 
+// Search lives on the feed itself, so the tab bar carries the four
+// destinations you cannot reach any other way.
 const ITEMS = [
   { href: '/feed', label: 'Feed', icon: 'feed' },
-  { href: '/search', label: 'Search', icon: 'search' },
+  { href: '/membership', label: 'Plan', icon: 'plan' },
   { href: '/tails', label: 'My Tails', icon: 'tails' },
   { href: '/profile', label: 'Profile', icon: 'profile' },
 ] as const;
@@ -38,10 +40,12 @@ function Icon({ name }: { name: string }) {
         <rect x="3" y="14" width="18" height="6" rx="2.2" />
       </svg>
     );
-  if (name === 'search')
+  if (name === 'plan')
     return (
-      <svg {...common} strokeLinecap="round">
-        <circle cx="11" cy="11" r="7" /><path d="m20 20-3.6-3.6" />
+      <svg {...common} strokeLinejoin="round" strokeLinecap="round">
+        <rect x="3" y="5" width="18" height="14" rx="2.4" />
+        <path d="M3 9.5h18" />
+        <path d="M7 14.5h4" />
       </svg>
     );
   if (name === 'tails')

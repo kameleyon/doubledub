@@ -1,17 +1,26 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { signIn, signUp, type AuthState } from '@/lib/actions/auth';
+import { authenticate, type AuthState } from '@/lib/actions/auth';
 
 const initial: AuthState = {};
 
 export function AuthForm({ mode, next }: { mode: 'signin' | 'signup'; next?: string }) {
-  const router = useRouter();
-  const isSignup = mode === 'signup';
-  const [state, action, pending] = useActionState(isSignup ? signUp : signIn, initial);
+  // Local rather than route-derived: the tab has to flip on the same tick as
+  // the click. Navigating first meant a server round trip during which nothing
+  // changed on screen, which reads as a dead button.
+  const [current, setCurrent] = useState(mode);
+  const isSignup = current === 'signup';
+  const [state, action, pending] = useActionState(authenticate, initial);
+
+  // Keep the address bar honest without re-rendering from the server.
+  function switchTo(next: 'signin' | 'signup') {
+    if (next === current) return;
+    setCurrent(next);
+    window.history.replaceState(null, '', next === 'signup' ? '/sign-up' : '/sign-in');
+  }
   const [reveal, setReveal] = useState(false);
   const [age, setAge] = useState(false);
 
@@ -29,7 +38,7 @@ export function AuthForm({ mode, next }: { mode: 'signin' | 'signup'; next?: str
       <div className="mt-9 flex gap-1 rounded-[14px] border border-[var(--color-line)] bg-[var(--color-surface)] p-1">
         <button
           type="button"
-          onClick={() => router.push('/sign-up')}
+          onClick={() => switchTo('signup')}
           className={`h-11 flex-1 rounded-[11px] text-[13.5px] font-semibold transition-colors ${
             isSignup
               ? 'bg-[var(--color-accent)] text-[var(--color-on-accent)]'
@@ -40,7 +49,7 @@ export function AuthForm({ mode, next }: { mode: 'signin' | 'signup'; next?: str
         </button>
         <button
           type="button"
-          onClick={() => router.push('/sign-in')}
+          onClick={() => switchTo('signin')}
           className={`h-11 flex-1 rounded-[11px] text-[13.5px] font-semibold transition-colors ${
             !isSignup
               ? 'bg-[var(--color-accent)] text-[var(--color-on-accent)]'
@@ -52,6 +61,7 @@ export function AuthForm({ mode, next }: { mode: 'signin' | 'signup'; next?: str
       </div>
 
       <form action={action} className="mt-6 flex flex-col gap-4">
+        <input type="hidden" name="mode" value={current} />
         {next ? <input type="hidden" name="next" value={next} /> : null}
 
         <label className="flex flex-col gap-2">

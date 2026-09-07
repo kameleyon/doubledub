@@ -16,7 +16,8 @@
     "verify": "npm run typecheck && npm run db:audit && npm run verify:rls",
     "verify:smoke": "node scripts/smoke-feed.mjs",
     "seed:posts": "node scripts/seed-demo-posts.mjs",
-    "seed:stripe": "node scripts/seed-stripe-prices.mjs"
+    "seed:stripe": "node scripts/seed-stripe-prices.mjs",
+    "build:icons": "node scripts/build-icons.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.6",

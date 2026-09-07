@@ -1,0 +1,29 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - img "doubledub" [ref=e4]
+    - generic [ref=e5]: BETTER PICKS BIGGER WINS
+  - generic [ref=e6]:
+    - button "Create account" [ref=e7]
+    - button "Log in" [ref=e8]
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]: Email address
+      - textbox "Email address" [ref=e12]:
+        - /placeholder: you@example.com
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]: Create a password
+        - button "Create a password" [ref=e16]: Show
+      - textbox "At least 8 characters" [ref=e17]
+    - generic [ref=e18] [cursor=pointer]:
+      - checkbox "I am 21 or older and I accept the Terms and Privacy Policy." [ref=e19]
+      - generic [ref=e21]:
+        - text: I am 21 or older and I accept the
+        - link "Terms" [ref=e22]:
+          - /url: /legal/terms
+        - text: and
+        - link "Privacy Policy" [ref=e23]:
+          - /url: /legal/privacy
+        - text: .
+    - button "Create account" [disabled] [ref=e24]
+  - paragraph [ref=e25]: doubledub publishes information and opinion only and does not accept wagers. 21+ only. If you or someone you know has a gambling problem, call 1-800-GAMBLER.

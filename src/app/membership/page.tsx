@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { getCurrentUser, getEntitlement } from '@/lib/auth';
 import { PlanPicker } from '@/components/PlanPicker';
+import { BottomNav } from '@/components/BottomNav';
+import { PLANS, formatPrice } from '@/lib/plans';
 
 export const metadata: Metadata = { title: 'Membership' };
 export const dynamic = 'force-dynamic';
@@ -17,35 +19,53 @@ export default async function MembershipPage({
 
   const { canceled } = await searchParams;
   const entitlement = await getEntitlement();
+  const currentPlan = PLANS.find((p) => p.termDays === entitlement.termDays);
+  const renews = entitlement.currentPeriodEnd
+    ? new Date(entitlement.currentPeriodEnd).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : null;
 
-  // Already paying — this page is the paywall, not the manage screen.
-  if (entitlement.active) redirect('/feed');
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[440px] flex-col px-[18px] pt-5 pb-8">
-      <header className="flex items-center gap-1 pb-3">
-        <Link
-          href="/feed"
-          className="flex h-11 w-11 items-center justify-center text-[#C9C9CE] no-underline"
-          aria-label="Back"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m14.5 5-7 7 7 7" />
-          </svg>
-        </Link>
-        <span className="text-[15px] font-semibold tracking-[-0.015em]">Membership</span>
+    <div className="mx-auto flex h-dvh w-full max-w-[440px] flex-col overflow-hidden">
+      <header className="flex flex-shrink-0 items-center px-[18px] pt-[22px] pb-3">
+        <span className="text-[19px] font-bold tracking-[-0.03em]">Membership</span>
       </header>
+
+      <div className="dd-scroll flex-1 overflow-y-auto px-[18px] pb-6">
+
+      {entitlement.active ? (
+        <section className="mb-6 rounded-[16px] border-[1.5px] border-[var(--color-accent)] bg-[rgba(248,209,23,0.055)] p-[17px]">
+          <div className="text-[9.5px] font-bold uppercase tracking-[0.16em] text-[var(--color-accent)]">
+            Current plan
+          </div>
+          <div className="mt-[7px] text-[17px] font-bold tracking-[-0.025em]">
+            {currentPlan?.label ?? 'Active membership'}
+          </div>
+          <div className="mt-[5px] text-[12px] text-[var(--color-ink-2)]">
+            {renews
+              ? `${entitlement.cancelAtPeriodEnd ? 'Ends' : 'Renews'} ${renews}${
+                  currentPlan ? ` · ${formatPrice(currentPlan.amountCents)}` : ''
+                }`
+              : 'Active'}
+          </div>
+        </section>
+      ) : null}
 
       <div className="px-[2px] pt-1 pb-5">
         <div className="text-[9.5px] font-bold uppercase tracking-[0.18em] text-[var(--color-accent)]">
-          Full access
+          {entitlement.active ? 'Change plan' : 'Full access'}
         </div>
         <h1 className="mt-[10px] text-[26px] font-bold leading-[1.18] tracking-[-0.035em] text-balance">
-          Every pick, the second it drops.
+          {entitlement.active ? 'Switch to a longer term.' : 'Every pick, the second it drops.'}
         </h1>
         <p className="mt-[10px] text-[13.5px] leading-relaxed text-[var(--color-ink-2)] text-pretty">
-          Members see the full feed, tail a play with one tap, and can comment on every pick.
-          Cancel any time.
+          {entitlement.active
+            ? 'Longer terms cost less per day. Changing plans takes effect immediately.'
+            : 'Members see the full feed, tail a play with one tap, and can comment on every pick. Cancel any time.'}
         </p>
       </div>
 
@@ -69,6 +89,9 @@ export default async function MembershipPage({
         <Link href="/legal/refunds">Refund Policy</Link>. Your plan renews automatically until
         cancelled. Cancel any time from your profile.
       </p>
-    </main>
+      </div>
+
+      <BottomNav active="/membership" />
+    </div>
   );
 }
