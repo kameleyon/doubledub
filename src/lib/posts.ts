@@ -26,6 +26,14 @@ export async function getFeed(
        like_count, tail_count, comment_count, view_count,
        post_legs ( selection, market, odds, units, position )`,
     )
+    // Filter explicitly rather than leaning on RLS alone.
+    //
+    // The admin policy grants SELECT on every post, drafts included, so without
+    // this an admin's feed silently differed from what members actually see —
+    // exactly the person who most needs an accurate view of the product.
+    // RLS stays the security backstop; this is about showing the truth.
+    .eq('status', 'published')
+    .lte('published_at', new Date().toISOString())
     .order('published_at', { ascending: false })
     .limit(FEED_PAGE_SIZE);
 

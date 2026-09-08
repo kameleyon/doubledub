@@ -1,220 +1,314 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { createPost, type AdminState } from '@/lib/actions/admin';
-import { BET_TYPES, type BetType } from '@/lib/feed';
+import { createPost, updatePost, type AdminState } from '@/lib/actions/admin';
+import { BET_TYPES, BET_TYPE_LABEL, type BetType } from '@/lib/feed';
+import { SlipDropzone } from '@/components/admin/SlipDropzone';
 
 const initial: AdminState = {};
 
 type Leg = { selection: string; market: string; odds: string; units: string };
-
 const emptyLeg: Leg = { selection: '', market: '', odds: '', units: '' };
 
-export function PostComposer() {
-  const [state, action, pending] = useActionState(createPost, initial);
-  const [kind, setKind] = useState<'slip' | 'text'>('text');
-  const [betType, setBetType] = useState<BetType>('single');
-  const [legs, setLegs] = useState<Leg[]>([{ ...emptyLeg }]);
-  const [gated, setGated] = useState(false);
+export type ExistingPost = {
+  id: string;
+  kind: 'slip' | 'text';
+  betType: BetType;
+  title: string;
+  caption: string;
+  minTermDays: number;
+  published: boolean;
+  pinned: boolean;
+  legs: Leg[];
+  imageUrl: string | null;
+};
+
+export function PostComposer({ existing }: { existing?: ExistingPost }) {
+  const editing = Boolean(existing);
+  const [state, action, pending] = useActionState(editing ? updatePost : createPost, initial);
+
+  const [kind, setKind] = useState<'slip' | 'text'>(existing?.kind ?? 'text');
+  const [betType, setBetType] = useState<BetType>(existing?.betType ?? 'single');
+  const [title, setTitle] = useState(existing?.title ?? '');
+  const [caption, setCaption] = useState(existing?.caption ?? '');
+  const [legs, setLegs] = useState<Leg[]>(existing?.legs?.length ? existing.legs : [{ ...emptyLeg }]);
+  const [gated, setGated] = useState((existing?.minTermDays ?? 0) > 0);
+  const [pinned, setPinned] = useState(existing?.pinned ?? false);
+  const [slipPreview, setSlipPreview] = useState<string | null>(existing?.imageUrl ?? null);
 
   function updateLeg(i: number, patch: Partial<Leg>) {
     setLegs((prev) => prev.map((l, idx) => (idx === i ? { ...l, ...patch } : l)));
   }
 
   return (
-    <form action={action} className="flex max-w-[720px] flex-col gap-6">
-      <input type="hidden" name="kind" value={kind} />
-      <input type="hidden" name="betType" value={betType} />
-      <input type="hidden" name="minTermDays" value={gated ? 30 : 0} />
+    <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+      <form action={action} className="flex min-w-0 max-w-[680px] flex-1 flex-col gap-6">
+        {existing ? <input type="hidden" name="postId" value={existing.id} /> : null}
+        <input type="hidden" name="kind" value={kind} />
+        <input type="hidden" name="betType" value={betType} />
+        <input type="hidden" name="minTermDays" value={gated ? 30 : 0} />
 
-      <Field label="Post type">
-        <div className="flex gap-[10px]">
-          <TypeCard
-            on={kind === 'text'}
-            onClick={() => setKind('text')}
-            title="Text pick"
-            sub="Type the selection and odds"
-          />
-          <TypeCard
-            on={kind === 'slip'}
-            onClick={() => setKind('slip')}
-            title="Betting slip image"
-            sub="Upload a screenshot after saving"
-          />
-        </div>
-      </Field>
+        <Field label="Post type">
+          <div className="flex flex-wrap gap-[10px]">
+            <TypeCard on={kind === 'text'} onClick={() => setKind('text')} title="Text pick" sub="Type the selection and odds" />
+            <TypeCard on={kind === 'slip'} onClick={() => setKind('slip')} title="Betting slip image" sub="Paste or drop a screenshot" />
+          </div>
+        </Field>
 
-      <Field label="Bet type">
-        <div className="flex flex-wrap gap-[7px]">
-          {BET_TYPES.map((b) => (
-            <button
-              key={b.value}
-              type="button"
-              onClick={() => setBetType(b.value)}
-              className={`inline-flex h-10 items-center rounded-full border px-[15px] text-[12.5px] font-medium ${
-                betType === b.value
-                  ? 'border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-on-accent)]'
-                  : 'border-[var(--color-line)] bg-[#17171A] text-[var(--color-ink-2)]'
-              }`}
-            >
-              {b.label}
-            </button>
-          ))}
-        </div>
-      </Field>
-
-      <Field label="Headline">
-        <input
-          name="title"
-          maxLength={120}
-          placeholder="e.g. Pick of the night"
-          className="h-[50px] w-full rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-4 text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
-        />
-      </Field>
-
-      {kind === 'text' ? (
-        <Field label="Selections">
-          <div className="flex flex-col gap-[10px]">
-            {legs.map((leg, i) => (
-              <div key={i} className="flex flex-wrap items-center gap-[10px]">
-                <span className="w-[22px] flex-shrink-0 font-mono text-[12px] text-[var(--color-ink-4)]">
-                  {i + 1}.
-                </span>
-                <input
-                  name={`leg-${i}-selection`}
-                  value={leg.selection}
-                  onChange={(e) => updateLeg(i, { selection: e.target.value })}
-                  placeholder="Selection, e.g. Anthony Edwards Over 26.5 PTS"
-                  className="h-[50px] min-w-[220px] flex-1 rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-4 text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
-                />
-                <input
-                  name={`leg-${i}-market`}
-                  value={leg.market}
-                  onChange={(e) => updateLeg(i, { market: e.target.value })}
-                  placeholder="Market"
-                  className="h-[50px] w-[150px] rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-3 text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
-                />
-                <input
-                  name={`leg-${i}-odds`}
-                  value={leg.odds}
-                  onChange={(e) => updateLeg(i, { odds: e.target.value })}
-                  placeholder="Odds"
-                  className="h-[50px] w-[92px] rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-3 font-mono text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
-                />
-                <input
-                  name={`leg-${i}-units`}
-                  value={leg.units}
-                  onChange={(e) => updateLeg(i, { units: e.target.value })}
-                  placeholder="Units"
-                  inputMode="decimal"
-                  className="h-[50px] w-[84px] rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-3 font-mono text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
-                />
-                {legs.length > 1 ? (
-                  <button
-                    type="button"
-                    onClick={() => setLegs((p) => p.filter((_, idx) => idx !== i))}
-                    className="h-[50px] w-11 rounded-[11px] text-[var(--color-ink-2)]"
-                    aria-label={`Remove selection ${i + 1}`}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="mx-auto">
-                      <path d="M6 12h12" />
-                    </svg>
-                  </button>
-                ) : null}
-              </div>
+        <Field label="Bet type">
+          <div className="flex flex-wrap gap-[7px]">
+            {BET_TYPES.map((b) => (
+              <button
+                key={b.value}
+                type="button"
+                onClick={() => setBetType(b.value)}
+                className={`inline-flex h-10 items-center rounded-full border px-[15px] text-[12.5px] font-medium ${
+                  betType === b.value
+                    ? 'border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-on-accent)]'
+                    : 'border-[var(--color-line)] bg-[#17171A] text-[var(--color-ink-2)]'
+                }`}
+              >
+                {b.label}
+              </button>
             ))}
           </div>
-          <button
-            type="button"
-            onClick={() => setLegs((p) => [...p, { ...emptyLeg }])}
-            className="mt-3 flex h-11 items-center gap-2 rounded-[11px] border border-dashed border-[#34343A] bg-[#17171A] px-4 text-[13px] font-medium text-[var(--color-ink-2)]"
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-              <path d="M12 6v12M6 12h12" />
-            </svg>
-            Add another selection
-          </button>
         </Field>
-      ) : null}
 
-      <Field label="Caption">
-        <textarea
-          name="caption"
-          rows={4}
-          maxLength={2000}
-          placeholder="Why you like it. This is what members read above the pick."
-          className="w-full resize-none rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] p-4 text-[14px] leading-relaxed text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
-        />
-      </Field>
+        <Field label="Headline">
+          <input
+            name="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            maxLength={120}
+            placeholder="e.g. Pick of the night"
+            className="h-[50px] w-full rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-4 text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
+          />
+        </Field>
 
-      <div className="flex flex-col gap-3 rounded-[14px] border border-[var(--color-line)] bg-[#17171A] p-4">
-        <Toggle
-          checked={gated}
-          onChange={setGated}
-          title="Longer plans only"
-          sub="Hide from members on plans shorter than a month"
-        />
-        <div className="h-px bg-[#26262B]" />
-        <label className="flex cursor-pointer items-center gap-3">
-          <input type="checkbox" name="pinned" className="h-4 w-4 accent-[var(--color-accent)]" />
-          <span className="flex flex-col">
-            <span className="text-[13.5px] font-medium">Pin to top of feed</span>
-            <span className="text-[11.5px] text-[var(--color-ink-3)]">Stays first for 6 hours</span>
-          </span>
-        </label>
-      </div>
+        {kind === 'slip' ? (
+          <Field label="Slip screenshot">
+            <SlipDropzone existingUrl={existing?.imageUrl ?? null} onChangeAction={(f) => setSlipPreview(f ? 'pending' : null)} />
+          </Field>
+        ) : (
+          <Field label="Selections">
+            <div className="flex flex-col gap-[10px]">
+              {legs.map((leg, i) => (
+                <div key={i} className="flex flex-wrap items-center gap-[10px]">
+                  <span className="w-[22px] flex-shrink-0 font-mono text-[12px] text-[var(--color-ink-4)]">{i + 1}.</span>
+                  <input
+                    name={`leg-${i}-selection`}
+                    value={leg.selection}
+                    onChange={(e) => updateLeg(i, { selection: e.target.value })}
+                    placeholder="Selection, e.g. Anthony Edwards Over 26.5 PTS"
+                    className="h-[50px] min-w-[200px] flex-1 rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-4 text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
+                  />
+                  <input
+                    name={`leg-${i}-market`}
+                    value={leg.market}
+                    onChange={(e) => updateLeg(i, { market: e.target.value })}
+                    placeholder="Market / game"
+                    className="h-[50px] w-[150px] rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-3 text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
+                  />
+                  <input
+                    name={`leg-${i}-odds`}
+                    value={leg.odds}
+                    onChange={(e) => updateLeg(i, { odds: e.target.value })}
+                    placeholder="Odds"
+                    className="h-[50px] w-[88px] rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-3 font-mono text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
+                  />
+                  <input
+                    name={`leg-${i}-units`}
+                    value={leg.units}
+                    onChange={(e) => updateLeg(i, { units: e.target.value })}
+                    placeholder="Units"
+                    inputMode="decimal"
+                    className="h-[50px] w-[80px] rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-3 font-mono text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
+                  />
+                  {legs.length > 1 ? (
+                    <button
+                      type="button"
+                      onClick={() => setLegs((p) => p.filter((_, idx) => idx !== i))}
+                      className="h-[50px] w-11 rounded-[11px] text-[var(--color-ink-2)]"
+                      aria-label={`Remove selection ${i + 1}`}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="mx-auto">
+                        <path d="M6 12h12" />
+                      </svg>
+                    </button>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => setLegs((p) => [...p, { ...emptyLeg }])}
+              className="mt-3 flex h-11 items-center gap-2 rounded-[11px] border border-dashed border-[#34343A] bg-[#17171A] px-4 text-[13px] font-medium text-[var(--color-ink-2)]"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <path d="M12 6v12M6 12h12" />
+              </svg>
+              Add another selection
+            </button>
+          </Field>
+        )}
 
-      {state.error ? (
-        <p role="alert" className="rounded-[11px] border border-[#4A2725] bg-[#2A1917] px-4 py-3 text-[12.5px] text-[var(--color-bad)]">
-          {state.error}
-        </p>
-      ) : null}
+        <Field label="Caption">
+          <textarea
+            name="caption"
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+            rows={4}
+            maxLength={2000}
+            placeholder="Why you like it. This is what members read above the pick."
+            className="w-full resize-none rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] p-4 text-[14px] leading-relaxed text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
+          />
+        </Field>
 
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="submit"
-          name="publish"
-          value="publish"
-          disabled={pending}
-          className={`flex h-12 items-center rounded-[11px] bg-[var(--color-accent)] px-6 text-[13.5px] font-bold text-[var(--color-on-accent)] ${
-            pending ? 'opacity-60' : ''
-          }`}
-        >
-          {pending ? 'Saving…' : kind === 'slip' ? 'Save and add image' : 'Publish now'}
-        </button>
-        <button
-          type="submit"
-          name="publish"
-          value="draft"
-          disabled={pending}
-          className="flex h-12 items-center rounded-[11px] border border-[var(--color-line)] bg-[#17171A] px-5 text-[13px] font-medium text-[var(--color-ink-2)]"
-        >
-          Save as draft
-        </button>
-      </div>
-    </form>
+        <div className="flex flex-col gap-3 rounded-[14px] border border-[var(--color-line)] bg-[#17171A] p-4">
+          <Toggle checked={gated} onChange={setGated} title="Longer plans only" sub="Hide from members on plans shorter than a month" />
+          <div className="h-px bg-[#26262B]" />
+          <label className="flex items-center gap-3">
+            <input type="checkbox" name="pinned" checked={pinned} onChange={(e) => setPinned(e.target.checked)} className="h-4 w-4 accent-[var(--color-accent)]" />
+            <span className="flex flex-col">
+              <span className="text-[13.5px] font-medium">Pin to top of feed</span>
+              <span className="text-[11.5px] text-[var(--color-ink-3)]">Stays first for 6 hours</span>
+            </span>
+          </label>
+        </div>
+
+        {state.error ? (
+          <p role="alert" className="rounded-[11px] border border-[#4A2725] bg-[#2A1917] px-4 py-3 text-[12.5px] text-[var(--color-bad)]">
+            {state.error}
+          </p>
+        ) : null}
+
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="submit"
+            name="publish"
+            value="publish"
+            disabled={pending}
+            className={`flex h-12 items-center rounded-[11px] bg-[var(--color-accent)] px-6 text-[13.5px] font-bold text-[var(--color-on-accent)] ${pending ? 'opacity-60' : ''}`}
+          >
+            {pending ? 'Saving…' : editing ? 'Save and publish' : 'Publish now'}
+          </button>
+          <button
+            type="submit"
+            name="publish"
+            value="draft"
+            disabled={pending}
+            className="flex h-12 items-center rounded-[11px] border border-[var(--color-line)] bg-[#17171A] px-5 text-[13px] font-medium text-[var(--color-ink-2)]"
+          >
+            Save as draft
+          </button>
+        </div>
+      </form>
+
+      {/* Live preview: the same card shape members get, so a bad caption or a
+          missing selection is visible before it is published rather than after. */}
+      <aside aria-label="Post preview" className="w-full max-w-[400px] flex-shrink-0">
+        <div className="pb-[11px] text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-ink-4)]">
+          How members will see it
+        </div>
+        <div className="rounded-[20px] border border-[#26262B] bg-[#17171A] p-4">
+          <article className="rounded-[16px] border border-[var(--color-line)] bg-[var(--color-surface)]">
+            <header className="flex items-center gap-2 px-[14px] pt-[14px]">
+              <span className="rounded-[6px] bg-[var(--color-surface-3)] px-2 py-[3px] text-[10px] font-semibold tracking-[0.07em] text-[var(--color-ink-2)]">
+                {BET_TYPE_LABEL[betType]}
+              </span>
+              <span className={`rounded-[6px] px-2 py-[3px] text-[10px] font-semibold tracking-[0.07em] ${kind === 'slip' ? 'bg-[rgba(248,209,23,0.13)] text-[var(--color-accent)]' : 'bg-[var(--color-surface-3)] text-[var(--color-ink-2)]'}`}>
+                {kind === 'slip' ? 'Slip' : 'Pick'}
+              </span>
+              {pinned ? (
+                <span className="rounded-[6px] bg-[var(--color-surface-3)] px-2 py-[3px] text-[10px] font-semibold tracking-[0.07em] text-[var(--color-ink-3)]">
+                  Pinned
+                </span>
+              ) : null}
+              <span className="flex-1" />
+              <span className="text-[11.5px] text-[var(--color-ink-3)]">just now</span>
+            </header>
+
+            {caption ? (
+              <p className="px-[14px] pt-[11px] text-[13.5px] leading-relaxed text-[#B6B6BC]">{caption}</p>
+            ) : (
+              <p className="px-[14px] pt-[11px] text-[13.5px] italic leading-relaxed text-[var(--color-ink-4)]">
+                Your caption appears here.
+              </p>
+            )}
+
+            {kind === 'slip' ? (
+              <div className="mx-[14px] mt-[13px] flex h-[120px] items-center justify-center rounded-[12px] border border-[#3A3A41] bg-[#101014] text-[12px] text-[var(--color-ink-4)]">
+                {slipPreview ? 'Slip screenshot' : 'No screenshot yet'}
+              </div>
+            ) : (
+              <div className="mx-[14px] mt-[13px] rounded-[12px] border border-[#2E2E35] bg-[var(--color-surface-2)] p-[14px]">
+                {title ? (
+                  <div className="text-[9.5px] font-bold uppercase tracking-[0.15em] text-[var(--color-accent)]">{title}</div>
+                ) : null}
+                <div className="mt-[11px] flex flex-col gap-[11px]">
+                  {legs.filter((l) => l.selection.trim()).length === 0 ? (
+                    <span className="text-[13px] italic text-[var(--color-ink-4)]">Selections appear here.</span>
+                  ) : (
+                    legs
+                      .filter((l) => l.selection.trim())
+                      .map((leg, i) => (
+                        <div key={i} className="flex items-center justify-between gap-3">
+                          <div className="flex flex-col gap-[3px]">
+                            <span className="text-[13.5px] font-medium text-[var(--color-ink)]">{leg.selection}</span>
+                            <span className="text-[11px] text-[var(--color-ink-3)]">
+                              {[leg.units ? `${leg.units} unit${Number(leg.units) === 1 ? '' : 's'}` : null, leg.market].filter(Boolean).join('  ·  ')}
+                            </span>
+                          </div>
+                          <span className="font-mono text-[13.5px] font-medium text-[var(--color-accent)]">{leg.odds}</span>
+                        </div>
+                      ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            <footer className="mt-[13px] flex items-center gap-[7px] border-t border-[#232327] px-[14px] py-[13px] text-[12.5px] font-medium text-[#8C8C93]">
+              <span className="flex items-center gap-[6px]">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
+                  <path d="M20.7 8.7c0 4.7-8.7 9.6-8.7 9.6S3.3 13.4 3.3 8.7A4.6 4.6 0 0 1 12 6.8a4.6 4.6 0 0 1 8.7 1.9Z" />
+                </svg>
+                0
+              </span>
+              <span className="flex items-center gap-[5px] text-[#5B5B62]">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <path d="M5 19v-4.5" /><path d="M11 19V9" /><path d="M17 19V4.5" />
+                </svg>
+                0 views
+              </span>
+            </footer>
+          </article>
+
+          {gated ? (
+            <p className="mt-3 text-[11.5px] leading-relaxed text-[var(--color-ink-3)]">
+              Only members on a one month plan or longer will see this.
+            </p>
+          ) : null}
+        </div>
+      </aside>
+    </div>
   );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="pb-[11px] text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-ink-4)]">
-        {label}
-      </div>
+      <div className="pb-[11px] text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-ink-4)]">{label}</div>
       {children}
     </div>
   );
 }
 
-function TypeCard({
-  on, onClick, title, sub,
-}: { on: boolean; onClick: () => void; title: string; sub: string }) {
+function TypeCard({ on, onClick, title, sub }: { on: boolean; onClick: () => void; title: string; sub: string }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-1 flex-col gap-1 rounded-[14px] border-[1.5px] p-4 text-left ${
+      className={`flex min-w-[200px] flex-1 flex-col gap-1 rounded-[14px] border-[1.5px] p-4 text-left ${
         on
           ? 'border-[var(--color-accent)] bg-[rgba(248,209,23,0.07)] text-[var(--color-accent)]'
           : 'border-[#26262B] bg-[#17171A] text-[var(--color-ink-2)]'
@@ -226,16 +320,10 @@ function TypeCard({
   );
 }
 
-function Toggle({
-  checked, onChange, title, sub,
-}: { checked: boolean; onChange: (v: boolean) => void; title: string; sub: string }) {
+function Toggle({ checked, onChange, title, sub }: { checked: boolean; onChange: (v: boolean) => void; title: string; sub: string }) {
   return (
     <button type="button" onClick={() => onChange(!checked)} className="flex items-center gap-3 text-left">
-      <span
-        className={`flex h-[26px] w-[44px] flex-shrink-0 items-center rounded-full p-[3px] ${
-          checked ? 'justify-end bg-[var(--color-accent)]' : 'justify-start bg-[#33333A]'
-        }`}
-      >
+      <span className={`flex h-[26px] w-[44px] flex-shrink-0 items-center rounded-full p-[3px] ${checked ? 'justify-end bg-[var(--color-accent)]' : 'justify-start bg-[#33333A]'}`}>
         <span className="h-5 w-5 rounded-full bg-white" />
       </span>
       <span className="flex flex-col">

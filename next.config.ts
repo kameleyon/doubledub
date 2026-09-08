@@ -19,6 +19,13 @@ const NO_STORE = {
 const nextConfig: NextConfig = {
   poweredByHeader: false,
 
+  experimental: {
+    // Slip screenshots travel through a Server Action. The default 1 MB cap
+    // would reject most phone screenshots outright; the client downscales
+    // before sending, so this ceiling is headroom rather than the norm.
+    serverActions: { bodySizeLimit: '12mb' },
+  },
+
   async headers() {
     return [
       ...MEMBER_ROUTES.flatMap((route) => [
