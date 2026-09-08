@@ -1,11 +1,10 @@
 import Link from 'next/link';
 
-// Search lives on the feed itself, so the tab bar carries the four
-// destinations you cannot reach any other way.
+// Search lives on the feed itself. "My Tails" is out while tailing is hidden —
+// a tab leading to a list of something you cannot create reads as broken.
 const ITEMS = [
   { href: '/feed', label: 'Feed', icon: 'feed' },
   { href: '/membership', label: 'Plan', icon: 'plan' },
-  { href: '/tails', label: 'My Tails', icon: 'tails' },
   { href: '/profile', label: 'Profile', icon: 'profile' },
 ] as const;
 

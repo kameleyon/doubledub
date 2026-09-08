@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getCurrentUser, getEntitlement, isAdmin } from '@/lib/auth';
-import { createClient } from '@/lib/supabase/server';
 import { BottomNav } from '@/components/BottomNav';
 import { formatPrice, PLANS } from '@/lib/plans';
 import Link from 'next/link';
@@ -13,16 +12,7 @@ export default async function ProfilePage() {
   const user = await getCurrentUser();
   if (!user) redirect('/sign-in?next=%2Fprofile');
 
-  const [entitlement, admin, supabase] = await Promise.all([
-    getEntitlement(),
-    isAdmin(user.id),
-    createClient(),
-  ]);
-
-  const { count: tailCount } = await supabase
-    .from('tails')
-    .select('post_id', { count: 'exact', head: true })
-    .eq('user_id', user.id);
+  const [entitlement, admin] = await Promise.all([getEntitlement(), isAdmin(user.id)]);
 
   const plan = PLANS.find((p) => p.termDays === entitlement.termDays);
   const renews = entitlement.currentPeriodEnd
@@ -60,7 +50,6 @@ export default async function ProfilePage() {
         </div>
 
         <div className="mt-[18px] flex gap-[9px]">
-          <Stat value={String(tailCount ?? 0)} label="Tails" />
           <Stat value={entitlement.active ? plan?.label ?? 'Active' : 'None'} label="Plan" />
           <Stat value={entitlement.active ? 'Active' : 'Lapsed'} label="Status" />
         </div>

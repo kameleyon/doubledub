@@ -1,18 +1,16 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { toggleLike, toggleTail } from '@/lib/actions/engagement';
+import { toggleLike } from '@/lib/actions/engagement';
 import { relativeTime, formatViews, BET_TYPE_LABEL, type FeedPost } from '@/lib/feed';
 
 export function PostCard({ post }: { post: FeedPost }) {
   const [liked, setLiked] = useState(post.liked);
-  const [tailed, setTailed] = useState(post.tailed);
   const [likes, setLikes] = useState(post.likeCount);
-  const [tails, setTails] = useState(post.tailCount);
   const [, start] = useTransition();
 
-  // Optimistic, with rollback. A tail that silently fails is worse than one
-  // that visibly bounces back — the member would think their bet was recorded.
+  // Optimistic, with rollback: the count moves on tap and reverts if the
+  // server refuses, so a failure is visible rather than silently swallowed.
   function onLike() {
     const next = !liked;
     setLiked(next);
@@ -22,19 +20,6 @@ export function PostCard({ post }: { post: FeedPost }) {
       if (!res.ok) {
         setLiked(!next);
         setLikes((n) => n + (next ? -1 : 1));
-      }
-    });
-  }
-
-  function onTail() {
-    const next = !tailed;
-    setTailed(next);
-    setTails((n) => n + (next ? 1 : -1));
-    start(async () => {
-      const res = await toggleTail(post.id, next);
-      if (!res.ok) {
-        setTailed(!next);
-        setTails((n) => n + (next ? -1 : 1));
       }
     });
   }
@@ -132,13 +117,6 @@ export function PostCard({ post }: { post: FeedPost }) {
           {likes}
         </button>
 
-        <span className="flex h-11 items-center gap-[6px] px-[11px] text-[12.5px] font-medium text-[#8C8C93]">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
-            <path d="M20.2 11.6a7.6 7.6 0 0 1-11.1 6.8L4 19.8l1.5-4.9a7.6 7.6 0 1 1 14.7-3.3Z" />
-          </svg>
-          {post.commentCount}
-        </span>
-
         <span className="flex h-11 items-center gap-[5px] px-[9px] text-[12px] font-medium text-[#5B5B62]">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
             <path d="M5 19v-4.5" /><path d="M11 19V9" /><path d="M17 19V4.5" />
@@ -146,24 +124,6 @@ export function PostCard({ post }: { post: FeedPost }) {
           {formatViews(post.viewCount)}
         </span>
 
-        <span className="flex-1" />
-
-        <button
-          type="button"
-          onClick={onTail}
-          aria-pressed={tailed}
-          className={`flex h-11 items-center gap-[7px] rounded-[12px] px-[15px] text-[12.5px] font-bold tracking-[-0.005em] ${
-            tailed
-              ? 'border border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-on-accent)]'
-              : 'border border-[#45401F] bg-transparent text-[var(--color-accent)]'
-          }`}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 8.5h10.5a4 4 0 0 1 4 4" /><path d="m15.5 5 3.5 3.5L15.5 12" />
-            <path d="M20 15.5H9.5a4 4 0 0 1-4-4" /><path d="M8.5 19 5 15.5 8.5 12" />
-          </svg>
-          {tailed ? 'Tailed' : 'Tail'} {tails}
-        </button>
       </footer>
     </article>
   );

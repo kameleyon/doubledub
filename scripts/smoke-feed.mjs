@@ -140,7 +140,13 @@ async function main() {
       check('/feed renders', true);
       check('feed shows a seeded pick', html.includes('Anthony Edwards') || html.includes('Blockx'),
         'no known pick text found');
-      check('feed shows the tail control', html.includes('Tail'));
+      // Tail and comment are hidden for now; like and view count are the
+      // whole engagement surface, so assert exactly that — and assert the
+      // removed ones stay removed rather than quietly coming back.
+      check('feed shows the like control', html.includes('M20.7 8.7c0 4.7'));
+      check('feed shows a view count', /\d+ views/.test(html));
+      check('tail control is absent', !/>Tail|Tailed/.test(html));
+      check('comment control is absent', !html.includes('M20.2 11.6a7.6'));
       check('page is not indexable', html.includes('noindex'));
     } else {
       const loc = res.headers.get('location') ?? '';

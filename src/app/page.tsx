@@ -46,7 +46,7 @@ export default function Home() {
         </h1>
         <p className="mx-auto mt-4 max-w-[380px] text-[14.5px] leading-relaxed text-[var(--color-ink-2)] text-pretty">
           One feed. Straights, parlays, props and futures across every sport — you take what you
-          want. Tail a play with one tap and see what everyone else is on.
+          want, the moment it posts.
         </p>
 
         <Link
@@ -72,8 +72,8 @@ export default function Home() {
             body="Filter to the kind of play you actually want — not by sport, across all of them."
           />
           <Feature
-            title="Tail with one tap"
-            body="Keep every play you have taken in one place, with the odds as they were posted."
+            title="Filter to what you play"
+            body="Narrow the feed to one kind of bet, or to just today, and skip everything else."
           />
           <Feature
             title="Members only, and it stays that way"

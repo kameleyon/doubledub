@@ -51,14 +51,15 @@ export async function getFeed(
   const ids = rows.map((r) => r.id);
 
   // Fetch engagement state and signed media alongside, not per card.
-  const [likesRes, tailsRes, mediaMap] = await Promise.all([
+  // Tails and comments are hidden from the feed for now. The tables, counters
+  // and policies all still exist, so restoring them is a UI change — but there
+  // is no point paying for the per-member tail lookup while nothing shows it.
+  const [likesRes, mediaMap] = await Promise.all([
     supabase.from('likes').select('post_id').in('post_id', ids).eq('user_id', user.id),
-    supabase.from('tails').select('post_id').in('post_id', ids).eq('user_id', user.id),
     signMediaForPosts(ids.filter((_, i) => rows[i].kind === 'slip')),
   ]);
 
   const liked = new Set((likesRes.data ?? []).map((r) => r.post_id));
-  const tailed = new Set((tailsRes.data ?? []).map((r) => r.post_id));
   const now = Date.now();
 
   return rows.map((r) => ({
@@ -84,6 +85,6 @@ export async function getFeed(
     commentCount: r.comment_count,
     viewCount: r.view_count,
     liked: liked.has(r.id),
-    tailed: tailed.has(r.id),
+    tailed: false,
   }));
 }
