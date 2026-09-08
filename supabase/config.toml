@@ -7,13 +7,13 @@ project_id = "irtnpnspjjlacamtudjz"
 # This defaulted to http://localhost:3000, which on this machine is a different
 # app entirely — confirmation links landed on its /login page and dropped the
 # code. It must point at doubledub.
-site_url = "https://doubledub-lightspiritux-8985s-projects.vercel.app"
+site_url = "https://doubledub.vercel.app"
 
 # Any redirect target we pass as emailRedirectTo must appear here or Supabase
 # silently falls back to site_url.
 additional_redirect_urls = [
-  "https://doubledub-lightspiritux-8985s-projects.vercel.app/auth/callback",
-  "https://doubledub-lightspiritux-8985s-projects.vercel.app/**",
+  "https://doubledub.vercel.app/auth/callback",
+  "https://doubledub.vercel.app/**",
   "http://localhost:3100/auth/callback",
   "http://localhost:3100/**",
 ]
