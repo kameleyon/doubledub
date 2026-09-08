@@ -15,6 +15,16 @@ const bodySchema = z.object({
   planCode: z.string().refine(isPlanCode, 'unknown plan'),
 });
 
+function safeOrigin(candidate: string): string {
+  try {
+    const url = new URL(candidate);
+    if (url.protocol === 'https:' || url.hostname === 'localhost') return url.origin;
+  } catch {
+    // fall through
+  }
+  return publicEnv.NEXT_PUBLIC_SITE_URL;
+}
+
 /**
  * Creates a Stripe Checkout session for the signed-in member.
  *
@@ -75,13 +85,24 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Return the member to the SAME origin they started on, so a preview
+    // deployment sends them back to that preview and a custom domain sends them
+    // back to the custom domain — rather than to whatever host happened to be
+    // baked into the environment at build time.
+    //
+    // Taken from nextUrl (the resolved request URL), NOT from the Origin or
+    // Host request headers: those are supplied by the caller, and feeding an
+    // attacker-controlled value into a redirect target is how open redirects
+    // get built. Anything that is not http(s) falls back to the configured URL.
+    const origin = safeOrigin(request.nextUrl.origin);
+
     const session = await stripe().checkout.sessions.create(
       {
         mode: 'subscription',
         customer: customerId,
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: `${publicEnv.NEXT_PUBLIC_SITE_URL}/feed?welcome=1`,
-        cancel_url: `${publicEnv.NEXT_PUBLIC_SITE_URL}/membership?canceled=1`,
+        success_url: `${origin}/feed?welcome=1`,
+        cancel_url: `${origin}/membership?canceled=1`,
         allow_promotion_codes: true,
         // Echoed back on the webhook so the entitlement can be attributed even
         // if the customer mapping is somehow missing.
