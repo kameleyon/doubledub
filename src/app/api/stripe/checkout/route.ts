@@ -15,14 +15,39 @@ const bodySchema = z.object({
   planCode: z.string().refine(isPlanCode, 'unknown plan'),
 });
 
+/**
+ * Resolves the origin Stripe should return the member to.
+ *
+ * `nextUrl.origin` ultimately derives from the Host header. Vercel validates
+ * Host against the project's assigned domains, but relying on that leaves the
+ * guarantee outside this codebase — so the value is checked against an explicit
+ * allowlist here and anything unrecognised falls back to the configured site.
+ *
+ * The practical risk was always small (the redirect target only affects where
+ * the payer themselves lands after paying with their own card), but a
+ * request-controlled value flowing into a redirect is worth closing outright
+ * rather than reasoning about each time.
+ */
 function safeOrigin(candidate: string): string {
+  const fallback = publicEnv.NEXT_PUBLIC_SITE_URL;
+
+  let url: URL;
+  let configured: URL;
   try {
-    const url = new URL(candidate);
-    if (url.protocol === 'https:' || url.hostname === 'localhost') return url.origin;
+    url = new URL(candidate);
+    configured = new URL(fallback);
   } catch {
-    // fall through
+    return fallback;
   }
-  return publicEnv.NEXT_PUBLIC_SITE_URL;
+
+  if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return url.origin;
+  if (url.protocol !== 'https:') return fallback;
+  if (url.hostname === configured.hostname) return url.origin;
+  // Preview deployments live on generated *.vercel.app hosts.
+  if (url.hostname.endsWith('.vercel.app')) return url.origin;
+
+  console.warn(`[checkout] unrecognised origin ${url.origin}, falling back`);
+  return fallback;
 }
 
 /**
