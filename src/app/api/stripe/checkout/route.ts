@@ -18,35 +18,32 @@ const bodySchema = z.object({
 /**
  * Resolves the origin Stripe should return the member to.
  *
- * `nextUrl.origin` ultimately derives from the Host header. Vercel validates
- * Host against the project's assigned domains, but relying on that leaves the
- * guarantee outside this codebase — so the value is checked against an explicit
- * allowlist here and anything unrecognised falls back to the configured site.
+ * Deliberately does NOT consult the request. `nextUrl.origin` derives from the
+ * Host header, and an earlier allowlist here accepted any `*.vercel.app` host —
+ * which is every Vercel user's deployments, not just ours.
  *
- * The practical risk was always small (the redirect target only affects where
- * the payer themselves lands after paying with their own card), but a
- * request-controlled value flowing into a redirect is worth closing outright
- * rather than reasoning about each time.
+ * Instead the origin comes from values the platform injects server-side:
+ *   production  -> the configured site URL
+ *   preview     -> VERCEL_URL, the host of this specific deployment
+ *   development -> localhost, and only localhost
+ *
+ * None of these can be influenced by a caller, so there is no reflected value
+ * to validate in the first place.
  */
-function safeOrigin(candidate: string): string {
+function checkoutOrigin(): string {
   const fallback = publicEnv.NEXT_PUBLIC_SITE_URL;
 
-  let url: URL;
-  let configured: URL;
-  try {
-    url = new URL(candidate);
-    configured = new URL(fallback);
-  } catch {
-    return fallback;
+  if (process.env.VERCEL_ENV === 'production') return fallback;
+
+  // Set by Vercel to this deployment's own hostname, so a preview returns the
+  // member to the preview they were using.
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+
+  if (process.env.NODE_ENV === 'development') {
+    const port = process.env.PORT ?? '3100';
+    return `http://localhost:${port}`;
   }
 
-  if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return url.origin;
-  if (url.protocol !== 'https:') return fallback;
-  if (url.hostname === configured.hostname) return url.origin;
-  // Preview deployments live on generated *.vercel.app hosts.
-  if (url.hostname.endsWith('.vercel.app')) return url.origin;
-
-  console.warn(`[checkout] unrecognised origin ${url.origin}, falling back`);
   return fallback;
 }
 
@@ -119,7 +116,7 @@ export async function POST(request: NextRequest) {
     // Host request headers: those are supplied by the caller, and feeding an
     // attacker-controlled value into a redirect target is how open redirects
     // get built. Anything that is not http(s) falls back to the configured URL.
-    const origin = safeOrigin(request.nextUrl.origin);
+    const origin = checkoutOrigin();
 
     const session = await stripe().checkout.sessions.create(
       {
