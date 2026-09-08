@@ -7,9 +7,6 @@ import { SlipDropzone } from '@/components/admin/SlipDropzone';
 
 const initial: AdminState = {};
 
-type Leg = { selection: string; market: string; odds: string; units: string };
-const emptyLeg: Leg = { selection: '', market: '', odds: '', units: '' };
-
 export type ExistingPost = {
   id: string;
   kind: 'slip' | 'text';
@@ -19,7 +16,6 @@ export type ExistingPost = {
   minTermDays: number;
   published: boolean;
   pinned: boolean;
-  legs: Leg[];
   imageUrl: string | null;
 };
 
@@ -31,14 +27,9 @@ export function PostComposer({ existing }: { existing?: ExistingPost }) {
   const [betType, setBetType] = useState<BetType>(existing?.betType ?? 'single');
   const [title, setTitle] = useState(existing?.title ?? '');
   const [caption, setCaption] = useState(existing?.caption ?? '');
-  const [legs, setLegs] = useState<Leg[]>(existing?.legs?.length ? existing.legs : [{ ...emptyLeg }]);
   const [gated, setGated] = useState((existing?.minTermDays ?? 0) > 0);
   const [pinned, setPinned] = useState(existing?.pinned ?? false);
   const [slipPreview, setSlipPreview] = useState<string | null>(existing?.imageUrl ?? null);
-
-  function updateLeg(i: number, patch: Partial<Leg>) {
-    setLegs((prev) => prev.map((l, idx) => (idx === i ? { ...l, ...patch } : l)));
-  }
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
@@ -89,68 +80,7 @@ export function PostComposer({ existing }: { existing?: ExistingPost }) {
           <Field label="Slip screenshot">
             <SlipDropzone existingUrl={existing?.imageUrl ?? null} onChangeAction={(f) => setSlipPreview(f ? 'pending' : null)} />
           </Field>
-        ) : (
-          <Field label="Selections">
-            <div className="flex flex-col gap-[10px]">
-              {legs.map((leg, i) => (
-                <div key={i} className="flex flex-wrap items-center gap-[10px]">
-                  <span className="w-[22px] flex-shrink-0 font-mono text-[12px] text-[var(--color-ink-4)]">{i + 1}.</span>
-                  <input
-                    name={`leg-${i}-selection`}
-                    value={leg.selection}
-                    onChange={(e) => updateLeg(i, { selection: e.target.value })}
-                    placeholder="Selection, e.g. Anthony Edwards Over 26.5 PTS"
-                    className="h-[50px] min-w-[200px] flex-1 rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-4 text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
-                  />
-                  <input
-                    name={`leg-${i}-market`}
-                    value={leg.market}
-                    onChange={(e) => updateLeg(i, { market: e.target.value })}
-                    placeholder="Market / game"
-                    className="h-[50px] w-[150px] rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-3 text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
-                  />
-                  <input
-                    name={`leg-${i}-odds`}
-                    value={leg.odds}
-                    onChange={(e) => updateLeg(i, { odds: e.target.value })}
-                    placeholder="Odds"
-                    className="h-[50px] w-[88px] rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-3 font-mono text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
-                  />
-                  <input
-                    name={`leg-${i}-units`}
-                    value={leg.units}
-                    onChange={(e) => updateLeg(i, { units: e.target.value })}
-                    placeholder="Units"
-                    inputMode="decimal"
-                    className="h-[50px] w-[80px] rounded-[12px] border-[1.5px] border-[var(--color-line)] bg-[#17171A] px-3 font-mono text-[14px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-4)] focus:border-[var(--color-accent)]"
-                  />
-                  {legs.length > 1 ? (
-                    <button
-                      type="button"
-                      onClick={() => setLegs((p) => p.filter((_, idx) => idx !== i))}
-                      className="h-[50px] w-11 rounded-[11px] text-[var(--color-ink-2)]"
-                      aria-label={`Remove selection ${i + 1}`}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="mx-auto">
-                        <path d="M6 12h12" />
-                      </svg>
-                    </button>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => setLegs((p) => [...p, { ...emptyLeg }])}
-              className="mt-3 flex h-11 items-center gap-2 rounded-[11px] border border-dashed border-[#34343A] bg-[#17171A] px-4 text-[13px] font-medium text-[var(--color-ink-2)]"
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <path d="M12 6v12M6 12h12" />
-              </svg>
-              Add another selection
-            </button>
-          </Field>
-        )}
+        ) : null}
 
         <Field label="Caption">
           <textarea
@@ -228,10 +158,16 @@ export function PostComposer({ existing }: { existing?: ExistingPost }) {
               <span className="text-[11.5px] text-[var(--color-ink-3)]">just now</span>
             </header>
 
+            {title ? (
+              <div className="px-[14px] pt-[11px] text-[9.5px] font-bold uppercase tracking-[0.15em] text-[var(--color-accent)]">
+                {title}
+              </div>
+            ) : null}
+
             {caption ? (
-              <p className="px-[14px] pt-[11px] text-[13.5px] leading-relaxed text-[#B6B6BC]">{caption}</p>
+              <p className="px-[14px] pt-[9px] text-[13.5px] leading-relaxed text-[#B6B6BC]">{caption}</p>
             ) : (
-              <p className="px-[14px] pt-[11px] text-[13.5px] italic leading-relaxed text-[var(--color-ink-4)]">
+              <p className="px-[14px] pt-[9px] text-[13.5px] italic leading-relaxed text-[var(--color-ink-4)]">
                 Your caption appears here.
               </p>
             )}
@@ -240,32 +176,7 @@ export function PostComposer({ existing }: { existing?: ExistingPost }) {
               <div className="mx-[14px] mt-[13px] flex h-[120px] items-center justify-center rounded-[12px] border border-[#3A3A41] bg-[#101014] text-[12px] text-[var(--color-ink-4)]">
                 {slipPreview ? 'Slip screenshot' : 'No screenshot yet'}
               </div>
-            ) : (
-              <div className="mx-[14px] mt-[13px] rounded-[12px] border border-[#2E2E35] bg-[var(--color-surface-2)] p-[14px]">
-                {title ? (
-                  <div className="text-[9.5px] font-bold uppercase tracking-[0.15em] text-[var(--color-accent)]">{title}</div>
-                ) : null}
-                <div className="mt-[11px] flex flex-col gap-[11px]">
-                  {legs.filter((l) => l.selection.trim()).length === 0 ? (
-                    <span className="text-[13px] italic text-[var(--color-ink-4)]">Selections appear here.</span>
-                  ) : (
-                    legs
-                      .filter((l) => l.selection.trim())
-                      .map((leg, i) => (
-                        <div key={i} className="flex items-center justify-between gap-3">
-                          <div className="flex flex-col gap-[3px]">
-                            <span className="text-[13.5px] font-medium text-[var(--color-ink)]">{leg.selection}</span>
-                            <span className="text-[11px] text-[var(--color-ink-3)]">
-                              {[leg.units ? `${leg.units} unit${Number(leg.units) === 1 ? '' : 's'}` : null, leg.market].filter(Boolean).join('  ·  ')}
-                            </span>
-                          </div>
-                          <span className="font-mono text-[13.5px] font-medium text-[var(--color-accent)]">{leg.odds}</span>
-                        </div>
-                      ))
-                  )}
-                </div>
-              </div>
-            )}
+            ) : null}
 
             <footer className="mt-[13px] flex items-center gap-[7px] border-t border-[#232327] px-[14px] py-[13px] text-[12.5px] font-medium text-[#8C8C93]">
               <span className="flex items-center gap-[6px]">

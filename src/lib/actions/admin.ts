@@ -23,13 +23,6 @@ const BUCKET = 'slips';
 const MAX_BYTES = 10 * 1024 * 1024;
 const ALLOWED_MIME = ['image/png', 'image/jpeg', 'image/webp'] as const;
 
-const legSchema = z.object({
-  selection: z.string().trim().min(1).max(200),
-  market: z.string().trim().max(120).default(''),
-  odds: z.string().trim().max(20).default(''),
-  units: z.coerce.number().min(0).max(100).nullable().catch(null),
-});
-
 const postSchema = z.object({
   kind: z.enum(['slip', 'text']),
   betType: z.enum(['single', 'parlay', 'prop', 'total', 'futures', 'live']),
@@ -38,24 +31,7 @@ const postSchema = z.object({
   minTermDays: z.coerce.number().int().min(0).max(365).default(0),
   pinned: z.boolean().default(false),
   publish: z.boolean().default(true),
-  legs: z.array(legSchema).max(12).default([]),
 });
-
-/** Legs arrive as parallel indexed fields; rebuild them before validating. */
-function readLegs(formData: FormData): unknown[] {
-  const legs: unknown[] = [];
-  for (let i = 0; formData.has(`leg-${i}-selection`); i++) {
-    const selection = String(formData.get(`leg-${i}-selection`) ?? '').trim();
-    if (!selection) continue;
-    legs.push({
-      selection,
-      market: String(formData.get(`leg-${i}-market`) ?? ''),
-      odds: String(formData.get(`leg-${i}-odds`) ?? ''),
-      units: formData.get(`leg-${i}-units`) || null,
-    });
-  }
-  return legs;
-}
 
 function parsePost(formData: FormData) {
   return postSchema.safeParse({
@@ -66,7 +42,6 @@ function parsePost(formData: FormData) {
     minTermDays: formData.get('minTermDays') ?? 0,
     pinned: formData.get('pinned') === 'on',
     publish: formData.get('publish') !== 'draft',
-    legs: readLegs(formData),
   });
 }
 
@@ -147,8 +122,8 @@ export async function createPost(_prev: AdminState, formData: FormData): Promise
     const file = formData.get('slip');
     const hasFile = file instanceof File && file.size > 0;
 
-    if (data.kind === 'text' && data.legs.length === 0) {
-      return { error: 'A text pick needs at least one selection.' };
+    if (data.kind === 'text' && !data.title && !data.caption) {
+      return { error: 'A text pick needs a headline or a caption.' };
     }
     if (data.kind === 'slip' && !hasFile) {
       return { error: 'Add the slip screenshot before publishing.' };
@@ -174,23 +149,6 @@ export async function createPost(_prev: AdminState, formData: FormData): Promise
     if (error || !post) {
       console.error('[admin] post insert failed', error);
       return { error: 'Could not save the post.' };
-    }
-
-    if (data.legs.length) {
-      const { error: legErr } = await db.from('post_legs').insert(
-        data.legs.map((l, i) => ({
-          post_id: post.id,
-          position: i,
-          selection: l.selection,
-          market: l.market,
-          odds: l.odds,
-          units: l.units,
-        })),
-      );
-      if (legErr) {
-        await db.from('posts').delete().eq('id', post.id);
-        return { error: 'Could not save the selections.' };
-      }
     }
 
     if (hasFile) {
@@ -233,8 +191,8 @@ export async function updatePost(_prev: AdminState, formData: FormData): Promise
       return { error: parsed.error.issues[0]?.message ?? 'Check the form.' };
     }
     const data = parsed.data;
-    if (data.kind === 'text' && data.legs.length === 0) {
-      return { error: 'A text pick needs at least one selection.' };
+    if (data.kind === 'text' && !data.title && !data.caption) {
+      return { error: 'A text pick needs a headline or a caption.' };
     }
 
     const db = createAdminClient();
@@ -257,20 +215,6 @@ export async function updatePost(_prev: AdminState, formData: FormData): Promise
       .eq('id', id);
 
     if (error) return { error: 'Could not save your changes.' };
-
-    await db.from('post_legs').delete().eq('post_id', id);
-    if (data.legs.length) {
-      await db.from('post_legs').insert(
-        data.legs.map((l, i) => ({
-          post_id: id,
-          position: i,
-          selection: l.selection,
-          market: l.market,
-          odds: l.odds,
-          units: l.units,
-        })),
-      );
-    }
 
     const file = formData.get('slip');
     if (file instanceof File && file.size > 0) {

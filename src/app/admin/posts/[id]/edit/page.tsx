@@ -18,10 +18,11 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
 
   if (!post) notFound();
 
-  const [{ data: legs }, { data: media }] = await Promise.all([
-    db.from('post_legs').select('selection, market, odds, units').eq('post_id', id).order('position'),
-    db.from('post_media').select('storage_path').eq('post_id', id).limit(1),
-  ]);
+  const { data: media } = await db
+    .from('post_media')
+    .select('storage_path')
+    .eq('post_id', id)
+    .limit(1);
 
   // The bucket is private, so the editor needs its own signed URL to show the
   // current image. Short-lived, same as the member feed.
@@ -40,12 +41,6 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
     minTermDays: post.min_term_days,
     published: post.status === 'published',
     pinned: Boolean(post.pinned_until && new Date(post.pinned_until) > new Date()),
-    legs: (legs ?? []).map((l) => ({
-      selection: l.selection,
-      market: l.market,
-      odds: l.odds,
-      units: l.units === null ? '' : String(l.units),
-    })),
     imageUrl,
   };
 

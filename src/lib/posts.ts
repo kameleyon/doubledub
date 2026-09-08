@@ -4,7 +4,7 @@ import { requireEntitled } from '@/lib/auth';
 import { signMediaForPosts } from '@/lib/media';
 import { FEED_PAGE_SIZE, isBetType, rangeCutoff, type FeedPost } from '@/lib/feed';
 
-export type { FeedPost, FeedLeg, FeedMedia } from '@/lib/feed';
+export type { FeedPost, FeedMedia } from '@/lib/feed';
 
 /**
  * Loads one page of the feed for the signed-in member.
@@ -23,8 +23,7 @@ export async function getFeed(
     .from('posts')
     .select(
       `id, kind, bet_type, title, caption, published_at, pinned_until,
-       like_count, tail_count, comment_count, view_count,
-       post_legs ( selection, market, odds, units, position )`,
+       like_count, tail_count, comment_count, view_count`,
     )
     // Filter explicitly rather than leaning on RLS alone.
     //
@@ -78,15 +77,6 @@ export async function getFeed(
     caption: r.caption,
     publishedAt: r.published_at ?? '',
     pinned: r.pinned_until ? new Date(r.pinned_until).getTime() > now : false,
-    legs: (r.post_legs ?? [])
-      .slice()
-      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-      .map((l) => ({
-        selection: l.selection,
-        market: l.market,
-        odds: l.odds,
-        units: l.units === null ? null : Number(l.units),
-      })),
     media: mediaMap.get(r.id) ?? [],
     likeCount: r.like_count,
     tailCount: r.tail_count,

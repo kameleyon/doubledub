@@ -48,8 +48,14 @@ export function PostCard({ post }: { post: FeedPost }) {
         <span className="text-[11.5px] text-[var(--color-ink-3)]">{relativeTime(post.publishedAt)}</span>
       </header>
 
+      {post.title ? (
+        <div className="px-[14px] pt-[11px] text-[9.5px] font-bold uppercase tracking-[0.15em] text-[var(--color-accent)]">
+          {post.title}
+        </div>
+      ) : null}
+
       {post.caption ? (
-        <p className="px-[14px] pt-[11px] text-[13.5px] leading-relaxed text-[#B6B6BC] text-pretty">
+        <p className="px-[14px] pt-[9px] text-[13.5px] leading-relaxed text-[#B6B6BC] text-pretty">
           {post.caption}
         </p>
       ) : null}
@@ -70,35 +76,6 @@ export function PostCard({ post }: { post: FeedPost }) {
               draggable={false}
             />
           ))}
-        </div>
-      ) : null}
-
-      {post.kind === 'text' && post.legs.length > 0 ? (
-        <div className="mx-[14px] mt-[13px] rounded-[12px] border border-[#2E2E35] bg-[var(--color-surface-2)] p-[14px]">
-          {post.title ? (
-            <div className="text-[9.5px] font-bold uppercase tracking-[0.15em] text-[var(--color-accent)]">
-              {post.title}
-            </div>
-          ) : null}
-          <div className="mt-[11px] flex flex-col gap-[11px]">
-            {post.legs.map((leg, i) => (
-              <div key={i} className="flex items-center justify-between gap-3">
-                <div className="flex flex-col gap-[3px]">
-                  <span className="text-[13.5px] font-medium tracking-[-0.01em] text-[var(--color-ink)]">
-                    {leg.selection}
-                  </span>
-                  <span className="text-[11px] text-[var(--color-ink-3)]">
-                    {[leg.units ? `${leg.units} unit${leg.units === 1 ? '' : 's'}` : null, leg.market]
-                      .filter(Boolean)
-                      .join('  ·  ')}
-                  </span>
-                </div>
-                <span className="font-mono text-[13.5px] font-medium text-[var(--color-accent)]">
-                  {leg.odds}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
       ) : null}
 

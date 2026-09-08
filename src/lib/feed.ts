@@ -16,13 +16,6 @@ export type FeedMedia = {
   expiresAt: string;
 };
 
-export type FeedLeg = {
-  selection: string;
-  market: string;
-  odds: string;
-  units: number | null;
-};
-
 export type FeedPost = {
   id: string;
   kind: 'slip' | 'text';
@@ -31,7 +24,6 @@ export type FeedPost = {
   caption: string;
   publishedAt: string;
   pinned: boolean;
-  legs: FeedLeg[];
   media: FeedMedia[];
   likeCount: number;
   tailCount: number;
